@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 互動單字記憶卡 - B5L1: The Island Made of the Sea</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --tag-bg: #e2e8f0;
+      --tag-text: #334155;
+      --orange-accent: #ff9800;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 20px 38px rgba(0, 0, 0, 0.12);
+      --radius: 28px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 32px 20px 80px;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    header {
+      max-width: 1240px;
+      margin: 0 auto 36px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      font-weight: 500;
+    }
+
+    .toolbar {
+      background: #ffffff;
+      padding: 14px 24px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-size: 0.95rem;
+      color: #334155;
+      border: 1px solid #edf2f7;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: #0284c7;
+      background: #e0f2fe;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.88rem;
+    }
+
+    .file-input-label {
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 8px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid #bfdbfe;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-input-label:hover {
+      background: #dbeafe;
+      transform: translateY(-1px);
+    }
+
+    .cards-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    @media (min-width: 768px) {
+      .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .card-scene {
+      perspective: 1400px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .card {
+      width: 100%;
+      position: relative;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      background-color: var(--card-bg);
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+      transform-style: preserve-3d;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      grid-area: 1 / 1 / 2 / 2;
+      width: 100%;
+      border-radius: var(--radius);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      background: var(--card-bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-front {
+      z-index: 2;
+      transform: rotateY(0deg);
+    }
+
+    .image-wrapper {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+      background-color: #f1f5f9;
+    }
+
+    .sprite-img {
+      width: 100%;
+      height: 100%;
+      background-size: 406% 406%;
+      background-repeat: no-repeat;
+      background-color: #f8fafc;
+      transform-origin: center center;
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover .sprite-img {
+      transform: scale(1.03);
+    }
+
+    .front-text-area {
+      padding: 28px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .front-word {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.15;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .front-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .audio-btn {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      outline: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      color: #1e293b;
+    }
+
+    .audio-btn:hover {
+      background: #e2e8f0;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .flip-hint {
+      margin-top: 18px;
+      font-size: 0.88rem;
+      color: #94a3b8;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      align-items: center;
+      justify-content: center;
+      padding: 38px 28px;
+      text-align: center;
+      min-height: 100%;
+    }
+
+    .back-word {
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.1;
+      margin-bottom: 14px;
+      letter-spacing: -0.02em;
+    }
+
+    .pos-and-meaning {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .pos-tag {
+      font-size: 1.1rem;
+      font-weight: bold;
+      font-style: italic;
+      background-color: var(--tag-bg);
+      color: var(--tag-text);
+      padding: 4px 14px;
+      border-radius: 10px;
+    }
+
+    .meaning-text {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #1e293b;
+    }
+
+    .strategy-hint {
+      font-size: 1.05rem;
+      color: #475569;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .mnemonic-box {
+      background-color: var(--orange-accent);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.3rem;
+      padding: 16px 24px;
+      border-radius: 20px;
+      line-height: 1.55;
+      margin-bottom: 20px;
+      width: 92%;
+      max-width: 500px;
+      box-shadow: 0 6px 18px rgba(255, 152, 0, 0.28);
+    }
+
+    .example-area {
+      width: 92%;
+      max-width: 500px;
+      border-top: 1.5px dashed #cbd5e1;
+      padding-top: 18px;
+      font-size: 1.25rem;
+      font-style: italic;
+      color: #475569;
+      line-height: 1.48;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🧠 互動單字記憶卡</h1>
+    <div class="subtitle">三民普通型高級中學 英文第五冊 U1: The Island Made of the Sea (共 27 個單字)</div>
+    <div class="toolbar">
+      <span class="badge-status">⚡ 雲端圖源自動連線 (4x4 無框裁切)</span>
+      <label class="file-input-label" title="選取 B5L1G1.jpg 與 B5L1G2.jpg">
+        📂 手動選取本機圖片替換
+        <input type="file" id="imageUploader" multiple accept="image/*" style="display: none;">
+      </label>
+      <span style="font-size: 0.88rem; color: #64748b;">(點擊卡片翻面，自動朗讀發音；已鎖定兩欄佈局)</span>
+    </div>
+  </header>
+
+  <main class="cards-container" id="cardsGrid"></main>
+
+  <footer class="footer-note">
+    高中英文 B5L1 核心單字記憶系統 • 採用 406% 溢位裁切安全區消除黑線
+  </footer>
+
+  <script>
+    const vocabData = [
+      {"en": "episode", "ph": "ˈɛpəˌsod", "pos": "n. [C]", "cn": "一集(節目)", "strategy": "諧音 (愛皮手套)", "mnemonic": "主角超愛穿皮手套，每一集節目都要戴著它破案！", "ex": "Sara spent one month watching every episode of Stranger Things on Netflix.", "grid": 1, "pos_idx": 0},
+      {"en": "spot", "ph": "spɑt", "pos": "n. [C]", "cn": "地點，場所；斑點", "strategy": "圖像結合", "mnemonic": "大麥町狗身上的黑色大斑點，爪子正好指在藏寶圖的最佳地點！", "ex": "Bob is busy looking for the perfect spot to open his coffee shop.", "grid": 1, "pos_idx": 1},
+      {"en": "coastline", "ph": "ˈkostˌlaɪn", "pos": "n. [C]", "cn": "海岸線", "strategy": "字根拆解 (coast 海岸 + line 線條)", "mnemonic": "沿著美麗蔚藍的海岸畫出一條發光的金線，這就是海岸線！", "ex": "The railway is built along the coastline and has a wonderful view of the sea.", "grid": 1, "pos_idx": 2},
+      {"en": "journey", "ph": "ˈdʒɝnɪ", "pos": "n. [C]", "cn": "旅行；旅程", "strategy": "諧音 (這泥濘)", "mnemonic": "沿著這泥濘的奇幻森林步道前行，開啟我們最難忘的冒險旅程！", "ex": "The couple went on a journey to a foreign country during their vacation.", "grid": 1, "pos_idx": 3},
+      {"en": "construct", "ph": "kənˈstrʌkt", "pos": "vt.", "cn": "建造", "strategy": "字根拆解 (con- 共同 + struct- 建造堆疊)", "mnemonic": "工程團隊齊心合力搬鋼樑，大家一起建造高聳入雲的摩天大樓！", "ex": "The team is planning to construct a new stadium.", "grid": 1, "pos_idx": 4},
+      {"en": "collapse", "ph": "kəˈlæps", "pos": "vi.", "cn": "倒塌", "strategy": "諧音 (可爛破)", "mnemonic": "撲克牌城堡瞬間可爛破裂，在一陣狂風中轟然倒塌！", "ex": "The building collapsed because of the strong earthquake.", "grid": 1, "pos_idx": 5},
+      {"en": "detail", "ph": "ˈditel", "pos": "n. [C]", "cn": "細節", "strategy": "諧音 (低頭看)", "mnemonic": "偵探低頭拿著放大鏡貼地觀察，連最微小的毛髮細節都不放過！", "ex": "The students are taking notes on all the details of the project.", "grid": 1, "pos_idx": 6},
+      {"en": "adapt", "ph": "əˈdæpt", "pos": "vi.; vt.", "cn": "適應；改編", "strategy": "諧音 (鵝戴帽 / 鵝大步)", "mnemonic": "一隻北極企鵝戴上草帽，在夏威夷沙灘鵝大步前行，完全適應了熱帶陽光！", "ex": "It took her several weeks to adapt to the new environment.", "grid": 1, "pos_idx": 7},
+      {"en": "crispy", "ph": "ˈkrɪspi", "pos": "adj.", "cn": "酥脆的", "strategy": "諧音 (快撕皮)", "mnemonic": "烤鴨師傅趁熱快撕皮，金黃油亮的外皮卡滋一聲薄脆如紙、無比酥脆！", "ex": "Tyler loves eating potato chips because of the crispy texture.", "grid": 1, "pos_idx": 8},
+      {"en": "sculpture", "ph": "ˈskʌlptʃɚ", "pos": "n. [C][U]", "cn": "雕塑，雕像", "strategy": "圖像法", "mnemonic": "雕刻大師敲下最後一鑿，一座鬼斧神工的英雄大理石雕像誕生了！", "ex": "David is one of the most famous sculptures in the world.", "grid": 1, "pos_idx": 9},
+      {"en": "combine", "ph": "kəmˈbaɪn", "pos": "vt.; vi.", "cn": "結合，合併", "strategy": "諧音 (乾杯)", "mnemonic": "兩位盟友熱情碰杯大喊乾杯，杯中發光的藍橙藥水結合合併成金色漩渦！", "ex": "This dessert is a great combination of chocolate and banana.", "grid": 1, "pos_idx": 10},
+      {"en": "brilliant", "ph": "ˈbrɪljənt", "pos": "adj.", "cn": "出色的；閃耀的", "strategy": "圖像法 (靈光乍現)", "mnemonic": "天才小博士提出出色的新點子，頭頂瞬間亮起出色耀眼的智慧大燈泡！", "ex": "Evan was elected captain of the team for his brilliant leadership.", "grid": 1, "pos_idx": 11},
+      {"en": "destination", "ph": "ˌdɛstəˈneʃən", "pos": "n. [C]", "cn": "目的地，終點", "strategy": "諧音 (迪士尼站)", "mnemonic": "列車長廣播終點是迪士尼站，車廂旅客歡呼終於抵達夢想中的童話目的地！", "ex": "London is a popular tourist destination.", "grid": 1, "pos_idx": 12},
+      {"en": "launch", "ph": "lɔntʃ", "pos": "vt.", "cn": "發起；發射(火箭)", "strategy": "圖像法 (火箭升空)", "mnemonic": "倒數三二一，巨大火箭噴出烈焰震撼發射升空！", "ex": "The children crowded around the TV to watch the rocket get launched into space.", "grid": 1, "pos_idx": 13},
+      {"en": "enormous", "ph": "ɪˈnɔrməs", "pos": "adj.", "cn": "巨大的", "strategy": "諧音 (姨媽弄的)", "mnemonic": "大胃王挑戰賽端出姨媽弄的巨無霸漢堡，居然比旁邊的送貨卡車還要巨大！", "ex": "Sean made an enormous cake which was enough to feed at least 50 people.", "grid": 1, "pos_idx": 14},
+      {"en": "contribute", "ph": "kənˈtrɪbjut", "pos": "vi.; vt.", "cn": "貢獻，捐助", "strategy": "諧音 (看邱比特)", "mnemonic": "快看邱比特揮舞小翅膀丟下大金幣，為愛心基金會做出巨大貢獻與捐助！", "ex": "Many volunteers spent their time contributing to the beach clean-up event.", "grid": 2, "pos_idx": 0},
+      {"en": "climax", "ph": "ˈklaɪmæks", "pos": "n. [C]", "cn": "高潮", "strategy": "字根諧音 (climb max 爬到最頂峰)", "mnemonic": "搖滾歌手唱到頂峰 (climb max)，舞台烈火與雷射齊發，全場沸騰掀起最高高潮！", "ex": "The climax of the movie occurred when the police officer finally found the missing boy.", "grid": 2, "pos_idx": 1},
+      {"en": "reflect", "ph": "rɪˈflɛkt", "pos": "vt.", "cn": "反映；倒映", "strategy": "字根拆解 (re- 回 + flect- 彎曲/折射)", "mnemonic": "鏡面湖水將天空折射回來，平靜湖面清澈反映出一座懸浮在雲端的夢幻城堡！", "ex": "Jessie always arranges her schedule carefully, and it reflects how organized she is.", "grid": 2, "pos_idx": 2},
+      {"en": "challenge", "ph": "ˈtʃæləndʒ", "pos": "n. [C][U]; vt.", "cn": "挑戰", "strategy": "諧音 (車輪戰)", "mnemonic": "劍士連續迎戰十波怪獸車輪戰，毫不退縮直面最艱鉅的勇者挑戰！", "ex": "Wendy took on the challenge of finishing all of the desserts within 20 minutes.", "grid": 2, "pos_idx": 3},
+      {"en": "recent", "ph": "ˈrisnt", "pos": "adj.", "cn": "近來的", "strategy": "諧音 (熱信)", "mnemonic": "拆開遠方摯友剛寄來的這封熱信，裡面寫滿了他近來的精彩生活近況！", "ex": "A recent study shows that it is more difficult for college graduates to get a job now.", "grid": 2, "pos_idx": 4},
+      {"en": "subscribe", "ph": "səbˈskraɪb", "pos": "vi.", "cn": "訂閱", "strategy": "諧音 (塞百塊)", "mnemonic": "動漫迷每個月跑去書店塞百塊給老闆，就是為了搶先訂閱最新一期的超級英雄漫畫！", "ex": "William has decided to subscribe to the music streaming service.", "grid": 2, "pos_idx": 5},
+      {"en": "channel", "ph": "ˈtʃænḷ", "pos": "n. [C]", "cn": "頻道；海峽", "strategy": "諧音 (搶那遙控器)", "mnemonic": "兩隻貓咪在沙發上激烈搶那遙控器，都想切換到自己最喜歡的卡通頻道！", "ex": "The soccer tournament will be broadcast on this sports channel tonight.", "grid": 2, "pos_idx": 6},
+      {"en": "play a role in", "ph": "", "pos": "phr.", "cn": "在……中發揮作用、扮演角色", "strategy": "圖像法 (舞台名角)", "mnemonic": "戴著金色獅子面具的演員在舞台上扮演角色，在這齣歷史大戲中發揮關鍵作用！", "ex": "Joy's interest in the news played a key role in her decision to study journalism in college.", "grid": 2, "pos_idx": 7},
+      {"en": "set out", "ph": "", "pos": "phr.", "cn": "啟程", "strategy": "圖像法 (揚帆遠航)", "mnemonic": "船長一聲令下揚起白帆，迎著破曉的萬丈朝霞正式啟程出海探險！", "ex": "We will set out on our trip to Yilan tomorrow.", "grid": 2, "pos_idx": 8},
+      {"en": "be meant to", "ph": "", "pos": "phr.", "cn": "用於、意在", "strategy": "諧音 (萌兔)", "mnemonic": "這台萌兔照護機器人專門用於陪伴長者，意在為獨居老爺爺送上滿滿溫暖！", "ex": "The new policy is meant to take care of the elderly who live alone.", "grid": 2, "pos_idx": 9},
+      {"en": "set sth on fire", "ph": "", "pos": "phr.", "cn": "使……燃燒", "strategy": "圖像法 (幼龍噴火)", "mnemonic": "調皮的小火龍打了一個大噴嚏，吐出一團火球使地毯燃燒起熊熊烈火！", "ex": "The candle fell off the table, which set the carpet on fire.", "grid": 2, "pos_idx": 10},
+      {"en": "find out", "ph": "", "pos": "phr.", "cn": "了解、發現", "strategy": "諧音 (翻到)", "mnemonic": "少女在閣樓箱子翻到一本泛黃的古地圖日記，驚喜發現了失落寶藏的祕密！", "ex": "Winnie couldn't help crying when she found out that her friends had lied to her.", "grid": 2, "pos_idx": 11}
+    ];
+
+    let gridImages = {
+      1: "https://raw.githubusercontent.com/terenceylhc/vocB5/main/B5L1G1.jpg",
+      2: "https://raw.githubusercontent.com/terenceylhc/vocB5/main/B5L1G2.jpg"
+    };
+
+    // 計算 4x4 精靈圖的背景百分比位置
+    function calculateSpritePosition(posIdx) {
+      const col = posIdx % 4;
+      const row = Math.floor(posIdx / 4);
+      const posX = (col * (100 / 3)).toFixed(4);
+      const posY = (row * (100 / 3)).toFixed(4);
+      return `${posX}% ${posY}%`;
+    }
+
+    function speakWord(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const cleanText = text.replace(/sth/g, 'something');
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function renderCards() {
+      const container = document.getElementById('cardsGrid');
+      container.innerHTML = '';
+
+      vocabData.forEach((item, index) => {
+        const bgPos = calculateSpritePosition(item.pos_idx);
+        const imgSrc = gridImages[item.grid] || `B5L1G${item.grid}.jpg`;
+
+        const scene = document.createElement('div');
+        scene.className = 'card-scene';
+
+        scene.innerHTML = `
+          <div class="card" id="card-${index}">
+            <!-- 【正面呈現 (Visual Cue Panel)】 -->
+            <div class="card-face card-front">
+              <div class="image-wrapper">
+                <div class="sprite-img" id="sprite-${index}" 
+                     style="background-image: url('${imgSrc}'), url('B5L1G${item.grid}.jpg'); background-position: ${bgPos};">
+                </div>
+              </div>
+              <div class="front-text-area">
+                <div class="front-word">${item.en}</div>
+                <div class="front-meta">
+                  <span>${item.ph ? `[${item.ph}]` : ''}</span>
+                  <button type="button" class="audio-btn" title="朗讀發音" onclick="event.stopPropagation(); speakWord('${item.en.replace(/'/g, "\\'")}')">🔊</button>
+                </div>
+                <div class="flip-hint">👆 點擊卡片查看記憶口訣</div>
+              </div>
+            </div>
+
+            <!-- 【反面呈現 (Textual Content Panel)】 -->
+            <div class="card-face card-back">
+              <div class="back-word">${item.en}</div>
+              <div class="pos-and-meaning">
+                <span class="pos-tag">${item.pos}</span>
+                <span class="meaning-text">${item.cn}</span>
+              </div>
+              <div class="strategy-hint">💡 策略：${item.strategy}</div>
+              <div class="mnemonic-box">${item.mnemonic}</div>
+              <div class="example-area">${item.ex}</div>
+            </div>
+          </div>
+        `;
+
+        const card = scene.querySelector('.card');
+        
+        // 點擊卡片翻面並自動朗讀一次單字
+        scene.addEventListener('click', () => {
+          card.classList.toggle('is-flipped');
+          speakWord(item.en);
+        });
+
+        container.appendChild(scene);
+      });
+    }
+
+    document.getElementById('imageUploader').addEventListener('change', function(e) {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        const objectUrl = URL.createObjectURL(file);
+        const nameUpper = file.name.toUpperCase();
+        if (nameUpper.includes('G1') || nameUpper.includes('L1G1') || nameUpper.includes('1')) {
+          gridImages[1] = objectUrl;
+        }
+        if (nameUpper.includes('G2') || nameUpper.includes('L1G2') || nameUpper.includes('2')) {
+          gridImages[2] = objectUrl;
+        }
+      });
+      renderCards();
+    });
+
+    // 初始化網頁渲染
+    renderCards();
+  </script>
+</body>
+</html>
