@@ -1,133 +1,758 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMING SOON | 新野獸派風格</title>
-    <!-- 引入 Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Lucide 圖示 -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@400;900&display=swap');
-        
-        body {
-            font-family: 'Lexend Mega', 'Courier New', monospace;
-            background-color: #FFD100;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 互動單字記憶卡 - B5U2</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
 
-        .brutalist-card {
-            background-color: white;
-            border: 6px solid black;
-            box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
-        }
+    /* 3D Flip Card Container & Transitions */
+    .card-scene {
+      perspective: 1600px;
+    }
 
-        .brutalist-shadow-sm {
-            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
-        }
+    .card-flipper {
+      position: relative;
+      width: 100%;
+      min-height: 100%;
+      transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-style: preserve-3d;
+    }
 
-        .brutalist-shadow-md {
-            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
-        }
+    .card-flipper.is-flipped {
+      transform: rotateY(180deg);
+    }
 
-        .brutalist-button-shadow {
-            box-shadow: 8px 8px 0px 0px rgba(255, 255, 255, 1);
-        }
+    /* Front and Back Face Layering */
+    .card-face {
+      width: 100%;
+      height: auto;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 28px;
+      background-color: #ffffff;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .brutalist-button-shadow:hover {
-            box-shadow: none;
-            transform: translate(4px, 4px);
-        }
+    .card-face-back {
+      transform: rotateY(180deg);
+      display: none;
+    }
 
-        .hover-lift:hover {
-            transform: translate(-4px, -4px);
-            box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
-        }
+    .card-flipper.is-flipped .card-face-front {
+      display: none;
+    }
 
-        @keyframes bounce-custom {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(10deg); }
-        }
-        .animate-bounce-custom {
-            animation: bounce-custom 3s infinite ease-in-out;
-        }
-    </style>
+    .card-flipper.is-flipped .card-face-back {
+      display: flex;
+    }
+
+    /* 16:9 Visual Cue Panel with 406% Safe Zone Cropping */
+    .image-crop-box {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      position: relative;
+      background-color: #0f172a;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+    }
+
+    .sprite-img {
+      width: 100%;
+      height: 100%;
+      background-size: 406% 406%;
+      background-repeat: no-repeat;
+      transform: translate3d(0, 0, 0);
+      transition: transform 0.35s ease;
+    }
+
+    .card-container:hover .sprite-img {
+      transform: scale(1.02);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
 </head>
-<body class="min-h-screen w-full flex flex-col items-center justify-center p-6 overflow-x-hidden">
+<body class="min-h-screen flex flex-col antialiased selection:bg-amber-100 selection:text-amber-900">
 
-    <!-- 裝飾性背景元素 -->
-    <div class="absolute top-10 left-10 animate-bounce-custom">
-        <i data-lucide="star" class="w-12 h-12 text-black fill-black"></i>
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-300">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Title & Chapter Tag -->
+      <div class="flex items-center space-x-3">
+        <span class="text-3xl filter drop-shadow">🧠</span>
+        <div>
+          <h1 class="text-xl md:text-2xl font-black tracking-tight text-slate-900">互動單字記憶卡</h1>
+          <p class="text-xs md:text-sm font-semibold text-slate-500">B5U2: B5L2 精選 30 單字 &amp; 片語庫</p>
+        </div>
+      </div>
+
+      <!-- Action Utilities -->
+      <div class="flex items-center gap-2 md:gap-3 flex-wrap">
+        <!-- Audio Speed Control -->
+        <button id="speedToggleBtn" class="flex items-center gap-1 text-xs md:text-sm font-bold px-3 py-1.5 rounded-full border border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-700 transition active:scale-95 shadow-xs">
+          <span>🐢 語速:</span>
+          <span id="speedLabel" class="text-amber-600 font-extrabold">1.0x</span>
+        </button>
+
+        <!-- Batch Flip Buttons -->
+        <div class="inline-flex rounded-xl p-1 bg-slate-100 border border-slate-200/70 text-xs md:text-sm font-medium">
+          <button id="allFrontBtn" class="px-3 py-1 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-white transition shadow-xs font-bold">
+            全部正面
+          </button>
+          <button id="allBackBtn" class="px-3 py-1 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-white transition shadow-xs font-bold">
+            全部反面
+          </button>
+        </div>
+
+        <!-- Progress Counter -->
+        <div class="bg-amber-50 text-amber-800 border border-amber-200/80 px-3 py-1.5 rounded-full text-xs font-extrabold flex items-center gap-1.5">
+          <span class="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span id="learnedCounter">已複習 0 / 30</span>
+        </div>
+      </div>
     </div>
-    <div class="absolute bottom-10 right-10 animate-pulse">
-        <i data-lucide="sparkles" class="w-16 h-16 text-black"></i>
+  </header>
+
+  <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
+    <!-- Notice Bar -->
+    <div class="mb-6 px-4 py-2.5 bg-sky-50 border border-sky-200 rounded-2xl flex items-center justify-between text-xs md:text-sm text-sky-800">
+      <div class="flex items-center gap-2">
+        <span class="text-base">💡</span>
+        <span>點擊卡片任何空白處可<strong>無縫翻面</strong>（翻面時自動進行英語發音）。點擊 🔊 按鈕可隨時重聽發音。</span>
+      </div>
+      <span class="text-xs text-sky-600 font-bold hidden sm:inline">電腦版雙欄 · 手機版單欄</span>
     </div>
-    <div class="absolute top-20 right-20 rotate-12 hidden md:block">
-        <div class="bg-white border-4 border-black p-4 brutalist-shadow-sm">
-            <i data-lucide="smile" class="w-8 h-8 text-black"></i>
-        </div>
+
+    <!-- Cards Grid (Desktop strictly 2 columns, Mobile 1 column, height adaptive) -->
+    <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+      <!-- Injected by JavaScript -->
     </div>
+  </main>
 
-    <!-- 主要內容容器 -->
-    <main class="relative z-10 max-w-3xl w-full">
-        
-        <!-- 頂部標籤 -->
-        <div class="inline-block bg-[#00FF41] border-4 border-black px-6 py-2 mb-8 -rotate-2 brutalist-shadow-sm">
-            <span class="text-xl font-black text-black tracking-tighter uppercase">
-                Work in Progress
-            </span>
-        </div>
+  <footer class="mt-auto py-6 border-t border-slate-200 bg-white/60 text-center text-xs text-slate-500">
+    <p class="font-medium">高中英語 B5U2 · 圖像記憶認知工程學單字卡 · 無框化安全區 406% 裁切技術</p>
+    <p class="mt-1 text-slate-400">雙格 4x4 影像矩陣 · 支援 Web Speech API 自動自然發音</p>
+  </footer>
 
-        <!-- 標題區塊 -->
-        <div class="brutalist-card p-8 sm:p-12 mb-12">
-            <h1 class="text-6xl sm:text-8xl font-black text-black leading-none mb-6 italic uppercase">
-                COMING <br> SOON <span class="not-italic text-[#FF60F0]">!</span>
-            </h1>
-            <div class="h-2 w-full bg-black mb-6"></div>
-            <p class="text-2xl sm:text-3xl font-bold text-black leading-tight">
-                我們正在打造一些 <br>
-                <span class="bg-[#FF60F0] px-2 text-white">超酷的東西</span>。
-            </p>
-        </div>
+  <!-- Notification Toast for Sound / Status -->
+  <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 px-4 py-2.5 rounded-2xl shadow-xl bg-slate-900 text-white text-xs md:text-sm font-bold flex items-center gap-2 z-50 pointer-events-none">
+    <span id="toastIcon">🔊</span>
+    <span id="toastMsg">發音中...</span>
+  </div>
 
-        <!-- 內容特點格點 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-            <div class="bg-[#ADFF00] border-4 border-black p-6 brutalist-shadow-md hover-lift transition-all cursor-default">
-                <i data-lucide="zap" class="w-10 h-10 mb-4 fill-white text-black"></i>
-                <h3 class="text-xl font-black mb-2">極速體驗</h3>
-                <p class="font-bold">比你想像的還要快。</p>
+  <script>
+    /* Raw Sprite Image URLs (Supporting both direct raw & GitHub blob fallback) */
+    const SPRITE_URLS = {
+      1: "https://raw.githubusercontent.com/terenceylhc/vocB5/main/B5L2G1.jpg",
+      2: "https://raw.githubusercontent.com/terenceylhc/vocB5/main/B5L2G2.jpg"
+    };
+
+    /* Complete 30-word dataset strictly preserving fixed order */
+    const VOCAB_DATA = [
+      {
+        "en": "recall",
+        "ph": "riˈkɔl",
+        "pos": "vt.",
+        "cn": "回憶，回想",
+        "strategy": "字根拆解 (re- 再次 + call 呼喚)",
+        "mnemonic": "看著發光的復古懷錶，老人努力再次呼叫記憶，回想回憶起那片向日葵花田！",
+        "ex": "Uncle Roger is unable to recall what he did two hours ago.",
+        "grid": 1,
+        "pos_idx": 0
+      },
+      {
+        "en": "awful",
+        "ph": "ˈɔfḷ",
+        "pos": "adj.",
+        "cn": "極糟的",
+        "strategy": "諧音 (嘔腐)",
+        "mnemonic": "鍋子裡煮出的暗黑料理散發嘔腐惡臭，味道實在極糟，連貓咪聞了都想吐！",
+        "ex": "My shoes got wet in the rain, and they smelled awful after I wore them all day long.",
+        "grid": 1,
+        "pos_idx": 1
+      },
+      {
+        "en": "depend",
+        "ph": "dɪˈpɛnd",
+        "pos": "vi.",
+        "cn": "依靠；取決於……",
+        "strategy": "諧音 (弟攀)",
+        "mnemonic": "頑皮的小弟攀在大樹高枝上採蘋果，全心依靠樹下的哥哥接住，能不能安全落地全取決於哥哥的臂力！",
+        "ex": "The kittens depend on their mother for care and food.",
+        "grid": 1,
+        "pos_idx": 2
+      },
+      {
+        "en": "procedure",
+        "ph": "prəˈsidʒɚ",
+        "pos": "n. [C][U]",
+        "cn": "手續，程序",
+        "strategy": "諧音 (鋪石磚)",
+        "mnemonic": "矮人工匠按部就班一塊塊鋪石磚，嚴格遵守古堡建造的標準施工程序與手續！",
+        "ex": "The workers followed the procedure for construction to build the bridge correctly and safely.",
+        "grid": 1,
+        "pos_idx": 3
+      },
+      {
+        "en": "mental",
+        "ph": "ˈmɛntḷ",
+        "pos": "adj.",
+        "cn": "心理的；精神的",
+        "strategy": "諧音 (饅頭)",
+        "mnemonic": "失戀難過時大口咬下熱呼呼的笑臉爆漿大饅頭，瞬間治癒心理創傷，重振陽光精神！",
+        "ex": "It is important that people should pay more attention to their mental health.",
+        "grid": 1,
+        "pos_idx": 4
+      },
+      {
+        "en": "exhausted",
+        "ph": "ɪgˈzɔstɪd",
+        "pos": "adj.",
+        "cn": "精疲力盡的",
+        "strategy": "諧音 (一個跑死)",
+        "mnemonic": "馬拉松跑者衝過終點直接癱軟在草地上，感覺整個人一個跑死般精疲力盡！",
+        "ex": "Billy looked exhausted because he spent the whole night working on a project.",
+        "grid": 1,
+        "pos_idx": 5
+      },
+      {
+        "en": "seek",
+        "ph": "sik",
+        "pos": "vt.",
+        "cn": "尋求；尋找",
+        "strategy": "諧音 (細看)",
+        "mnemonic": "探險家在黑暗水晶洞裡拿著放大鏡細看石壁，四處尋求尋找遠古寶藏的隱藏機關！",
+        "ex": "Penny is seeking an opportunity to work in an advertising agency.",
+        "grid": 1,
+        "pos_idx": 6
+      },
+      {
+        "en": "assistance",
+        "ph": "əˈsɪstəns",
+        "pos": "n. [U]",
+        "cn": "幫助；協助",
+        "strategy": "諧音 (愛心手套)",
+        "mnemonic": "救援小熊戴上神奇發光的愛心手套，在小貓受困高牆時及時伸出援手給予最溫暖的幫助！",
+        "ex": "Lance is learning how to ride a bike with the assistance of his grandfather.",
+        "grid": 1,
+        "pos_idx": 7
+      },
+      {
+        "en": "troublesome",
+        "ph": "ˈtrʌbḷsəm",
+        "pos": "adj.",
+        "cn": "麻煩的，惱人的",
+        "strategy": "字根拆解 (trouble 麻煩 + -some 令人感到……的)",
+        "mnemonic": "毛線球被頑皮的小精靈扯得滿地打結，真是一團超級麻煩又惱人的大混亂！",
+        "ex": "Jeff has had a troublesome pain in his leg since the skiing accident.",
+        "grid": 1,
+        "pos_idx": 8
+      },
+      {
+        "en": "remove",
+        "ph": "rɪˈmuv",
+        "pos": "vt.",
+        "cn": "移除；搬開",
+        "strategy": "字根拆解 (re- 離開 + move 移動)",
+        "mnemonic": "工程重裝機器人揮舞巨大夾爪，一口氣把橫躺在鐵軌上的巨石抓起並移除！",
+        "ex": "The original article had been removed from the website.",
+        "grid": 1,
+        "pos_idx": 9
+      },
+      {
+        "en": "threat",
+        "ph": "θrɛt",
+        "pos": "n. [U][C]",
+        "cn": "威脅",
+        "strategy": "字形諧音 (The rat 那隻大巨鼠)",
+        "mnemonic": "實驗室逃出一隻比雙層巴士還龐大、雙眼泛紅光的發狂巨鼠 (The rat)，成了全小鎮最大的致命威脅！",
+        "ex": "John faced the threat of losing his job as he made more and more mistakes at work.",
+        "grid": 1,
+        "pos_idx": 10
+      },
+      {
+        "en": "furthermore",
+        "ph": "ˈfɝðɚˌmɔr",
+        "pos": "adv.",
+        "cn": "此外，而且",
+        "strategy": "諧音 (佛地魔)",
+        "mnemonic": "大反派佛地魔 (furthermore) 施展黑魔法炸裂了城堡，此外而且還召喚出遮天蔽日的噴火黑龍與黑煙！",
+        "ex": "Furthermore, it was far from the MRT station.",
+        "grid": 1,
+        "pos_idx": 11
+      },
+      {
+        "en": "stress",
+        "ph": "strɛs",
+        "pos": "n. [U][C]",
+        "cn": "精神壓力",
+        "strategy": "諧音 (抓死死)",
+        "mnemonic": "被兩座公文大山壓垮的小白領，把手中的紓壓球抓死死，努力宣洩緊繃的精神壓力！",
+        "ex": "When Henry is under a lot of stress, he will tightly squeeze a ball in his hand.",
+        "grid": 1,
+        "pos_idx": 12
+      },
+      {
+        "en": "circumstance",
+        "ph": "ˈsɝkəmˌstæns",
+        "pos": "n. [C]",
+        "cn": "狀況，情況",
+        "strategy": "諧音 (四個人死等)",
+        "mnemonic": "暴風雪封住了下山的山路，四個人死等救援直升機，在物資即將耗盡的極端狀況情況下緊緊依偎取暖！",
+        "ex": "During the exam, students are not allowed to speak under any circumstances.",
+        "grid": 1,
+        "pos_idx": 13
+      },
+      {
+        "en": "witness",
+        "ph": "ˈwɪtnɪs",
+        "pos": "vt.; n. [C]",
+        "cn": "目擊，目睹；目擊者",
+        "strategy": "諧音 (威尼斯)",
+        "mnemonic": "船夫在水都威尼斯悠閒划著小船，親眼目睹目擊水底浮出一隻戴著水手帽的溫柔巨大水怪向他招手！",
+        "ex": "Joe witnessed the car accident and claimed that the driver broke the speed limit.",
+        "grid": 1,
+        "pos_idx": 14
+      },
+      {
+        "en": "occupy",
+        "ph": "ˈɑkjəˌpaɪ",
+        "pos": "vt.",
+        "cn": "使忙於……；佔據，佔領",
+        "strategy": "諧音 (鴨卡排)",
+        "mnemonic": "成百上千隻黃色小鴨佔據了整個大浴缸，滿頭泡泡的小男孩手忙腳亂，忙於抓鴨子！",
+        "ex": "Problems at work continued to occupy my mind.",
+        "grid": 2,
+        "pos_idx": 0
+      },
+      {
+        "en": "property",
+        "ph": "ˈprɑpɚtɪ",
+        "pos": "n. [U]",
+        "cn": "財產",
+        "strategy": "諧音 (婆婆提)",
+        "mnemonic": "億萬富豪婆婆提著一袋袋沉甸甸的金條與地契，自豪地展示她一生奮鬥累積的財產！",
+        "ex": "The wealthy businessman's personal property includes ten expensive Mercedez-Benz cars.",
+        "grid": 2,
+        "pos_idx": 1
+      },
+      {
+        "en": "occasion",
+        "ph": "əˈkeʒən",
+        "pos": "n. [C]",
+        "cn": "時候，時刻；特殊場合",
+        "strategy": "諧音 (偶開席)",
+        "mnemonic": "在慶祝豐收的盛大節慶這重要場合與時刻，總鋪師豪邁大喊「偶開席（occasion）啦！」，端出十層海鮮大蒸籠！",
+        "ex": "On this occasion, she didn't sing very well.",
+        "grid": 2,
+        "pos_idx": 2
+      },
+      {
+        "en": "counsel",
+        "ph": "ˈkaʊnsḷ",
+        "pos": "vt.",
+        "cn": "提供諮詢",
+        "strategy": "諧音 (看手相)",
+        "mnemonic": "智慧老法師抓著年輕人的手親切看手相與地圖，為他未來的人生冒險提供諮詢！",
+        "ex": "Mr. Chang counseled his students on their future plans.",
+        "grid": 2,
+        "pos_idx": 3
+      },
+      {
+        "en": "overcome",
+        "ph": "ˌovɚˈkʌm",
+        "pos": "vt.",
+        "cn": "克服，戰勝",
+        "strategy": "字根拆解 (over 超越 + come 來臨)",
+        "mnemonic": "少年咬緊牙關奮力翻越千仞絕壁，在破曉朝陽中振臂高呼，終於克服戰勝了懼高心魔！",
+        "ex": "Jerry overcame his shyness and delivered a short speech.",
+        "grid": 2,
+        "pos_idx": 4
+      },
+      {
+        "en": "grief",
+        "ph": "grif",
+        "pos": "n. [U]",
+        "cn": "悲痛，悲傷",
+        "strategy": "諧音 (鬼哭狼嚎)",
+        "mnemonic": "秋風在墓園如鬼哭般嗚咽，黑傘下的少女在石碑前獻上一束白百合，眼角滑落無盡的悲傷與悲痛。",
+        "ex": "Tina's grief over the death of her cousin was clear to anyone.",
+        "grid": 2,
+        "pos_idx": 5
+      },
+      {
+        "en": "relief",
+        "ph": "rɪˈlif",
+        "pos": "n. [U][sing.]",
+        "cn": "寬慰，放心；舒緩",
+        "strategy": "諧音 (熱力敷)",
+        "mnemonic": "落枕肩膀痠痛緊繃，貼上一片冒熱氣的「熱力敷」貼布，疼痛瞬間消除，整個人感到無比舒緩與放心！",
+        "ex": "To my great relief, my classmate found my lost smartphone.",
+        "grid": 2,
+        "pos_idx": 6
+      },
+      {
+        "en": "heal",
+        "ph": "hil",
+        "pos": "vi.; vt.",
+        "cn": "治癒；癒合",
+        "strategy": "諧音 (洗耳恭聽)",
+        "mnemonic": "走進森林小溪洗耳恭聽大自然的潺潺水聲與鳥鳴，疲憊受創的心靈奇蹟般被徹底治癒！",
+        "ex": "She is trained to heal people with mental problems.",
+        "grid": 2,
+        "pos_idx": 7
+      },
+      {
+        "en": "regret",
+        "ph": "rɪˈgrɛt",
+        "pos": "n. [C][U]; vt.",
+        "cn": "遺憾，懊悔",
+        "strategy": "諧音 (熱過頭)",
+        "mnemonic": "烤箱定時忘了關，剛做好的美味披薩烤得焦黑熱過頭，廚師看著一團黑炭抱頭痛哭，滿心懊悔與遺憾！",
+        "ex": "Vivian regretted joining the volleyball team.",
+        "grid": 2,
+        "pos_idx": 8
+      },
+      {
+        "en": "cherish",
+        "ph": "ˈtʃɛrɪʃ",
+        "pos": "vt.",
+        "cn": "珍惜",
+        "strategy": "諧音 (車厘子 ➔ 櫻桃)",
+        "mnemonic": "小松鼠把好不容易找到的紅寶石發光大車厘子（櫻桃）緊緊摟在懷裡貼著臉，無比珍惜愛護！",
+        "ex": "We should cherish the time we spend with our family.",
+        "grid": 2,
+        "pos_idx": 9
+      },
+      {
+        "en": "from the (bottom of one's) heart",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "真誠地、發自肺腑",
+        "strategy": "圖像法 (手捧心形發光水晶)",
+        "mnemonic": "少年雙手捧出一顆發光的純淨紅寶石愛心，向恩師深深鞠躬，發自肺腑、真誠地道謝！",
+        "ex": "Paul's wedding speech was given from the bottom of his heart.",
+        "grid": 2,
+        "pos_idx": 10
+      },
+      {
+        "en": "go through",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "經歷；穿過考驗",
+        "strategy": "圖像法 (披荊斬棘穿越考驗)",
+        "mnemonic": "小騎士舉著火把穿越黑暗的荊棘洞穴與烈火，經歷了無數艱鉅的險阻，終於迎來曙光！",
+        "ex": "John went through a lot of difficulties in this competition.",
+        "grid": 2,
+        "pos_idx": 11
+      },
+      {
+        "en": "talk sth over",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "討論，商量",
+        "strategy": "圖像法 (圍著地圖商量)",
+        "mnemonic": "小童軍圍坐在溫暖營火旁，就著微光在大地圖上指指點點，一起認真討論商量接下來的路線！",
+        "ex": "Annie had trouble choosing a topic, so she talked it over with her teacher.",
+        "grid": 2,
+        "pos_idx": 12
+      },
+      {
+        "en": "pass away",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "過世，去世",
+        "strategy": "圖像法 (靈魂化作白鳥飛向星空)",
+        "mnemonic": "老法師安詳過世，身上的光輝化作一隻純白的和平飛鳥穿過窗櫺，飛向靜謐的星空！",
+        "ex": "Lily's grandfather passed away last month from a heart attack.",
+        "grid": 2,
+        "pos_idx": 13
+      },
+      {
+        "en": "take pride in",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "以……為傲",
+        "strategy": "圖像法 (胸前掛著金牌的自信大廚)",
+        "mnemonic": "金牌大廚挺起胸膛展示特製的冠軍蛋糕，神采飛揚，以自己精湛的料理手藝為傲！",
+        "ex": "The singer takes pride in her work because she knows her songs bring joy.",
+        "grid": 2,
+        "pos_idx": 14
+      }
+    ];
+
+    let currentSpeechRate = 1.0;
+    const reviewedSet = new Set();
+
+    function showToast(msg, icon = '🔊') {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      
+      toastMsg.textContent = msg;
+      toastIcon.textContent = icon;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 1600);
+    }
+
+    function speakWord(text) {
+      if (!('speechSynthesis' in window)) {
+        showToast('此瀏覽器不支援語音合成', '⚠️');
+        return;
+      }
+      window.speechSynthesis.cancel(); // Stop ongoing speech
+      const cleanWord = text.replace(/[()]/g, '').trim();
+      const utterance = new SpeechSynthesisUtterance(cleanWord);
+      utterance.lang = 'en-US';
+      utterance.rate = currentSpeechRate;
+
+      // Select high-quality English voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const enVoice = voices.find(v => (v.lang === 'en-US' || v.lang.startsWith('en')) && v.name.includes('Natural')) 
+                   || voices.find(v => v.lang === 'en-US' || v.lang.startsWith('en'));
+      if (enVoice) utterance.voice = enVoice;
+
+      window.speechSynthesis.speak(utterance);
+      showToast(`發音: ${cleanWord}`);
+    }
+
+    function getSpritePosition(posIdx) {
+      const row = Math.floor(posIdx / 4); // 0, 1, 2, 3
+      const col = posIdx % 4;             // 0, 1, 2, 3
+      // For 4 items (0 to 3), the percentage steps are 0%, 33.333333%, 66.666667%, 100%
+      const xPercent = (col / 3) * 100;
+      const yPercent = (row / 3) * 100;
+      return `${xPercent.toFixed(4)}% ${yPercent.toFixed(4)}%`;
+    }
+
+    const cardsGrid = document.getElementById('cardsGrid');
+
+    function renderCards() {
+      cardsGrid.innerHTML = '';
+
+      VOCAB_DATA.forEach((item, index) => {
+        const bgPos = getSpritePosition(item.pos_idx);
+        const imageUrl = SPRITE_URLS[item.grid];
+
+        const cardArticle = document.createElement('article');
+        cardArticle.className = 'card-scene w-full h-auto cursor-pointer select-none';
+        cardArticle.setAttribute('data-index', index);
+
+        cardArticle.innerHTML = `
+          <div class="card-flipper" id="flipper-${index}">
+            <!-- Card Front (Visual Cue Panel) -->
+            <div class="card-face card-face-front border border-slate-200/80 hover:shadow-2xl transition-all duration-300">
+              
+              <!-- 16:9 Image Zone with 406% safe zone cropping -->
+              <div class="image-crop-box relative group">
+                <div class="sprite-img" style="background-image: url('${imageUrl}'); background-position: ${bgPos};" loading="lazy"></div>
+                <!-- Top-right Quick Audio Pill -->
+                <button class="audio-btn absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-800 shadow-md flex items-center justify-center text-lg active:scale-95 transition-transform" 
+                        data-word="${item.en}" title="聽發音" aria-label="朗讀單字">
+                  🔊
+                </button>
+                <div class="absolute bottom-2 left-3 z-10 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[11px] font-bold text-white tracking-wide">
+                  #${index + 1}
+                </div>
+              </div>
+
+              <!-- Front Text Area (Vertically Centered) -->
+              <div class="p-6 md:p-8 flex flex-col items-center justify-center text-center my-auto">
+                <h2 class="text-slate-900 tracking-tight leading-tight" style="font-size: 2.5rem; font-weight: 900;">
+                  ${item.en}
+                </h2>
+                
+                <div class="flex items-center justify-center gap-2 mt-2">
+                  <span class="text-slate-500 font-mono tracking-wide" style="font-size: 1.1rem;">
+                    ${item.ph ? `/${item.ph}/` : ''}
+                  </span>
+                  <button class="audio-btn p-1.5 rounded-full hover:bg-slate-100 text-slate-700 transition active:scale-90" 
+                          data-word="${item.en}" title="聽發音">
+                    🔊
+                  </button>
+                </div>
+
+                <div class="mt-4 flex items-center gap-1.5 text-xs text-amber-600 font-bold bg-amber-50 px-3 py-1 rounded-full border border-amber-200/60">
+                  <span>🔄 點擊翻面查看記憶法與例句</span>
+                </div>
+              </div>
             </div>
-            <div class="bg-white border-4 border-black p-6 brutalist-shadow-md hover-lift transition-all cursor-default">
-                <i data-lucide="heart" class="w-10 h-10 mb-4 fill-[#FF60F0] text-[#FF60F0]"></i>
-                <h3 class="text-xl font-black mb-2">精心設計</h3>
-                <p class="font-bold">每一像素都充滿靈魂。</p>
+
+            <!-- Card Back (Textual Content Panel - Vertically Centered Content) -->
+            <div class="card-face card-face-back border border-slate-200/80 p-6 md:p-8 flex flex-col justify-center text-center relative hover:shadow-2xl transition-all duration-300">
+              
+              <!-- Back Card Top Action Bar -->
+              <div class="flex items-center justify-between w-full mb-3">
+                <span class="text-xs font-black text-slate-400">NO. ${String(index + 1).padStart(2, '0')}</span>
+                <div class="flex items-center gap-2">
+                  <button class="audio-btn w-9 h-9 rounded-full bg-slate-100 hover:bg-amber-100 hover:text-amber-800 text-slate-700 flex items-center justify-center text-base transition active:scale-90 shadow-2xs" 
+                          data-word="${item.en}" title="再次發音">
+                    🔊
+                  </button>
+                  <span class="text-xs text-slate-400 hover:text-slate-600 font-medium">翻回正面 ↺</span>
+                </div>
+              </div>
+
+              <!-- Main Target Word (3.2rem, 900 weight, #0f172a) -->
+              <h2 class="tracking-tight leading-none mb-3 break-words" style="font-size: 3.2rem; font-weight: 900; color: #0f172a;">
+                ${item.en}
+              </h2>
+
+              <!-- POS Tag & Chinese Meaning -->
+              <div class="flex flex-wrap items-center justify-center gap-2 mb-3">
+                <span class="px-2.5 py-1 rounded-md text-slate-700 font-bold italic" style="font-size: 1.1rem; background-color: #e2e8f0;">
+                  ${item.pos}
+                </span>
+                <span class="font-extrabold text-slate-800 tracking-tight" style="font-size: 1.6rem;">
+                  ${item.cn}
+                </span>
+              </div>
+
+              <!-- Strategy Tip Block (Font enlarged for prominent cognitive cue) -->
+              <div class="mb-4">
+                <span class="inline-block px-4 py-2 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 font-extrabold tracking-wide shadow-2xs" style="font-size: 1.15rem;">
+                  💡 策略：${item.strategy}
+                </span>
+              </div>
+
+              <!-- Mnemonic Block (Font size refined down to 1.1rem for optimal density and readability) -->
+              <div class="w-full text-left shadow-md mb-5" 
+                   style="border-radius: 20px; background-color: #ff9800; color: #ffffff; font-weight: bold; font-size: 1.1rem; line-height: 1.65; padding: 16px 20px;">
+                <p class="drop-shadow-xs leading-relaxed">
+                  ${item.mnemonic}
+                </p>
+              </div>
+
+              <!-- Example Sentence Area (Thin dashed border, 1.25rem gray italic) -->
+              <div class="w-full pt-4 text-left border-t border-dashed border-gray-300">
+                <span class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">EXAMPLE</span>
+                <p class="leading-relaxed" style="font-size: 1.25rem; color: #475569; font-style: italic;">
+                  "${item.ex}"
+                </p>
+              </div>
             </div>
-        </div>
+          </div>
+        `;
 
-        <!-- 底部按鈕與連結 -->
-        <div class="flex flex-col sm:flex-row items-center gap-8">
-            <button class="w-full sm:w-auto bg-black text-white text-xl font-black px-10 py-5 border-4 border-black brutalist-button-shadow transition-all flex items-center justify-center gap-4">
-                了解更多 <i data-lucide="arrow-right" class="w-6 h-6"></i>
-            </button>
-            
-            <div class="flex gap-4">
-                <a href="#" class="w-14 h-14 bg-[#FF60F0] border-4 border-black flex items-center justify-center text-xl font-black brutalist-shadow-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">IG</a>
-                <a href="#" class="w-14 h-14 bg-[#3B82F6] border-4 border-black flex items-center justify-center text-xl font-black brutalist-shadow-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-white">FB</a>
-                <a href="#" class="w-14 h-14 bg-white border-4 border-black flex items-center justify-center text-xl font-black brutalist-shadow-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">X</a>
-            </div>
-        </div>
-    </main>
+        cardsGrid.appendChild(cardArticle);
+      });
+    }
 
-    <!-- 頁尾 -->
-    <footer class="mt-20">
-        <p class="text-xl font-black text-black bg-white border-2 border-black px-4 py-1 brutalist-shadow-sm">
-            EST. 2026 / BRAND STUDIO
-        </p>
-    </footer>
+    function setupInteractions() {
+      // Card Flip click handler
+      cardsGrid.addEventListener('click', (e) => {
+        // If clicking on audio button, speak without flipping
+        const audioBtn = e.target.closest('.audio-btn');
+        if (audioBtn) {
+          e.stopPropagation();
+          const word = audioBtn.getAttribute('data-word');
+          speakWord(word);
+          return;
+        }
 
-    <script>
-        // 初始化 Lucide 圖示
-        lucide.createIcons();
-    </script>
+        // Otherwise find card scene
+        const scene = e.target.closest('.card-scene');
+        if (!scene) return;
+
+        const index = scene.getAttribute('data-index');
+        const flipper = document.getElementById(`flipper-${index}`);
+        const willBeBack = !flipper.classList.contains('is-flipped');
+
+        flipper.classList.toggle('is-flipped');
+
+        // When flipping to the back (learning side), automatically read aloud once
+        if (willBeBack) {
+          const item = VOCAB_DATA[index];
+          speakWord(item.en);
+
+          // Update reviewed stats
+          reviewedSet.add(index);
+          updateCounter();
+        }
+      });
+
+      // Batch flip controls
+      document.getElementById('allFrontBtn').addEventListener('click', () => {
+        document.querySelectorAll('.card-flipper').forEach(f => f.classList.remove('is-flipped'));
+        showToast('已全部切換至正面', '🎴');
+      });
+
+      document.getElementById('allBackBtn').addEventListener('click', () => {
+        document.querySelectorAll('.card-flipper').forEach((f, idx) => {
+          f.classList.add('is-flipped');
+          reviewedSet.add(String(idx));
+        });
+        updateCounter();
+        showToast('已全部切換至反面', '📖');
+      });
+
+      // Speed Toggle
+      const speedBtn = document.getElementById('speedToggleBtn');
+      const speedLabel = document.getElementById('speedLabel');
+      const speeds = [1.0, 0.8, 1.2];
+      let speedIdx = 0;
+
+      speedBtn.addEventListener('click', () => {
+        speedIdx = (speedIdx + 1) % speeds.length;
+        currentSpeechRate = speeds[speedIdx];
+        speedLabel.textContent = `${currentSpeechRate.toFixed(1)}x`;
+        showToast(`發音速度設定為 ${currentSpeechRate.toFixed(1)}x`, '⚡');
+      });
+    }
+
+    function updateCounter() {
+      const counterEl = document.getElementById('learnedCounter');
+      if (counterEl) {
+        counterEl.textContent = `已複習 ${reviewedSet.size} / ${VOCAB_DATA.length}`;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCards();
+      setupInteractions();
+      
+      // Pre-warm Web Speech voices
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          window.speechSynthesis.getVoices();
+        };
+      }
+    });
+  </script>
 </body>
 </html>
