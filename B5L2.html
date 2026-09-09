@@ -20,13 +20,16 @@
 
     /* 3D Flip Card Container & Transitions */
     .card-scene {
-      perspective: 1600px;
+      perspective: 1400px;
+      width: 100%;
     }
 
     .card-flipper {
       position: relative;
       width: 100%;
-      min-height: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
       transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
       transform-style: preserve-3d;
     }
@@ -35,10 +38,11 @@
       transform: rotateY(180deg);
     }
 
-    /* Front and Back Face Layering */
+    /* Front and Back Face 3D Layering in same coordinate space (no vertical stacking) */
     .card-face {
+      grid-area: 1 / 1 / 2 / 2;
       width: 100%;
-      height: auto;
+      height: 100%;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       border-radius: 28px;
@@ -47,19 +51,21 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transform-style: preserve-3d;
+    }
+
+    .card-face-front {
+      transform: rotateY(0deg);
+      z-index: 2;
     }
 
     .card-face-back {
       transform: rotateY(180deg);
-      display: none;
-    }
-
-    .card-flipper.is-flipped .card-face-front {
-      display: none;
+      z-index: 1;
     }
 
     .card-flipper.is-flipped .card-face-back {
-      display: flex;
+      z-index: 3;
     }
 
     /* 16:9 Visual Cue Panel with 406% Safe Zone Cropping */
@@ -152,8 +158,8 @@
       <span class="text-xs text-sky-600 font-bold hidden sm:inline">電腦版雙欄 · 手機版單欄</span>
     </div>
 
-    <!-- Cards Grid (Desktop strictly 2 columns, Mobile 1 column, height adaptive) -->
-    <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+    <!-- Cards Grid (Desktop strictly 2 columns, Mobile 1 column, gap refined) -->
+    <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-7 w-full">
       <!-- Injected by JavaScript -->
     </div>
   </main>
@@ -592,7 +598,7 @@
               </div>
 
               <!-- Front Text Area (Vertically Centered) -->
-              <div class="p-6 md:p-8 flex flex-col items-center justify-center text-center my-auto">
+              <div class="p-6 md:p-8 flex flex-col items-center justify-center text-center flex-1 my-auto">
                 <h2 class="text-slate-900 tracking-tight leading-tight" style="font-size: 2.5rem; font-weight: 900;">
                   ${item.en}
                 </h2>
@@ -614,7 +620,7 @@
             </div>
 
             <!-- Card Back (Textual Content Panel - Vertically Centered Content) -->
-            <div class="card-face card-face-back border border-slate-200/80 p-6 md:p-8 flex flex-col justify-center text-center relative hover:shadow-2xl transition-all duration-300">
+            <div class="card-face card-face-back border border-slate-200/80 p-6 md:p-8 flex flex-col justify-between text-center relative hover:shadow-2xl transition-all duration-300">
               
               <!-- Back Card Top Action Bar -->
               <div class="flex items-center justify-between w-full mb-3">
@@ -650,7 +656,7 @@
                 </span>
               </div>
 
-              <!-- Mnemonic Block (Font size refined down to 1.1rem for optimal density and readability) -->
+              <!-- Mnemonic Block -->
               <div class="w-full text-left shadow-md mb-5" 
                    style="border-radius: 20px; background-color: #ff9800; color: #ffffff; font-weight: bold; font-size: 1.1rem; line-height: 1.65; padding: 16px 20px;">
                 <p class="drop-shadow-xs leading-relaxed">
@@ -658,8 +664,8 @@
                 </p>
               </div>
 
-              <!-- Example Sentence Area (Thin dashed border, 1.25rem gray italic) -->
-              <div class="w-full pt-4 text-left border-t border-dashed border-gray-300">
+              <!-- Example Sentence Area -->
+              <div class="w-full pt-4 text-left border-t border-dashed border-gray-300 mt-auto">
                 <span class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">EXAMPLE</span>
                 <p class="leading-relaxed" style="font-size: 1.25rem; color: #475569; font-style: italic;">
                   "${item.ex}"
