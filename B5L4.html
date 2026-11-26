@@ -1,133 +1,769 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMING SOON | 新野獸派風格</title>
-    <!-- 引入 Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Lucide 圖示 -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@400;900&display=swap');
-        
-        body {
-            font-family: 'Lexend Mega', 'Courier New', monospace;
-            background-color: #FFD100;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 互動單字記憶卡 - B5L4: The Number One Restaurant Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --tag-bg: #e2e8f0;
+      --tag-text: #334155;
+      --orange-accent: #ff9800;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 20px 38px rgba(0, 0, 0, 0.12);
+      --radius: 28px;
+    }
 
-        .brutalist-card {
-            background-color: white;
-            border: 6px solid black;
-            box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        .brutalist-shadow-sm {
-            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
-        }
+    body {
+      font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 32px 20px 80px;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
 
-        .brutalist-shadow-md {
-            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
-        }
+    header {
+      max-width: 1240px;
+      margin: 0 auto 36px;
+      text-align: center;
+    }
 
-        .brutalist-button-shadow {
-            box-shadow: 8px 8px 0px 0px rgba(255, 255, 255, 1);
-        }
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
 
-        .brutalist-button-shadow:hover {
-            box-shadow: none;
-            transform: translate(4px, 4px);
-        }
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      font-weight: 500;
+    }
 
-        .hover-lift:hover {
-            transform: translate(-4px, -4px);
-            box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
-        }
+    .toolbar {
+      background: #ffffff;
+      padding: 14px 24px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-size: 0.95rem;
+      color: #334155;
+      border: 1px solid #edf2f7;
+    }
 
-        @keyframes bounce-custom {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(10deg); }
-        }
-        .animate-bounce-custom {
-            animation: bounce-custom 3s infinite ease-in-out;
-        }
-    </style>
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: #0284c7;
+      background: #e0f2fe;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.88rem;
+    }
+
+    .file-input-label {
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 8px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid #bfdbfe;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-input-label:hover {
+      background: #dbeafe;
+      transform: translateY(-1px);
+    }
+
+    .cards-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    @media (min-width: 768px) {
+      .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .card-scene {
+      perspective: 1400px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .card {
+      width: 100%;
+      position: relative;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      background-color: var(--card-bg);
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+      transform-style: preserve-3d;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      grid-area: 1 / 1 / 2 / 2;
+      width: 100%;
+      border-radius: var(--radius);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      background: var(--card-bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-front {
+      z-index: 2;
+      transform: rotateY(0deg);
+    }
+
+    .image-wrapper {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+      background-color: #f1f5f9;
+    }
+
+    .sprite-img {
+      width: 100%;
+      height: 100%;
+      background-size: 406% 406%;
+      background-repeat: no-repeat;
+      background-color: #f8fafc;
+      transform-origin: center center;
+      transition: transform 0.4s ease;
+      image-rendering: smooth;
+      transform: translateZ(0);
+    }
+
+    .card:hover .sprite-img {
+      transform: scale(1.03) translateZ(0);
+    }
+
+    .front-text-area {
+      padding: 28px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .front-word {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.15;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .front-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .audio-btn {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      outline: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      color: #1e293b;
+    }
+
+    .audio-btn:hover {
+      background: #e2e8f0;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .flip-hint {
+      margin-top: 18px;
+      font-size: 0.88rem;
+      color: #94a3b8;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      align-items: center;
+      justify-content: center;
+      padding: 38px 28px;
+      text-align: center;
+      min-height: 100%;
+    }
+
+    .back-word {
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.1;
+      margin-bottom: 14px;
+      letter-spacing: -0.02em;
+    }
+
+    .pos-and-meaning {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .pos-tag {
+      font-size: 1.1rem;
+      font-weight: bold;
+      font-style: italic;
+      background-color: var(--tag-bg);
+      color: var(--tag-text);
+      padding: 4px 14px;
+      border-radius: 10px;
+    }
+
+    .meaning-text {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #1e293b;
+    }
+
+    .strategy-hint {
+      font-size: 1.05rem;
+      color: #475569;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .mnemonic-box {
+      background-color: var(--orange-accent);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.3rem;
+      padding: 16px 24px;
+      border-radius: 20px;
+      line-height: 1.55;
+      margin-bottom: 20px;
+      width: 92%;
+      max-width: 500px;
+      box-shadow: 0 6px 18px rgba(255, 152, 0, 0.28);
+    }
+
+    .example-area {
+      width: 92%;
+      max-width: 500px;
+      border-top: 1.5px dashed #cbd5e1;
+      padding-top: 18px;
+      font-size: 1.25rem;
+      font-style: italic;
+      color: #475569;
+      line-height: 1.48;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+  </style>
 </head>
-<body class="min-h-screen w-full flex flex-col items-center justify-center p-6 overflow-x-hidden">
+<body>
 
-    <!-- 裝飾性背景元素 -->
-    <div class="absolute top-10 left-10 animate-bounce-custom">
-        <i data-lucide="star" class="w-12 h-12 text-black fill-black"></i>
+  <header>
+    <h1>🧠 互動單字記憶卡</h1>
+    <div class="subtitle">三民普通型高級中學 英文第五冊 U4: The Number One Restaurant Online (共 26 個單字與片語)</div>
+    <div class="toolbar">
+      <span class="badge-status">⚡ 雲端圖源自動連線 (4x4 無框裁切)</span>
+      <label class="file-input-label" title="選取 B5L4G1.jpg 與 B5L4G2.jpg">
+        📂 手動選取本機圖片替換
+        <input type="file" id="imageUploader" multiple accept="image/*" style="display: none;">
+      </label>
+      <span style="font-size: 0.88rem; color: #64748b;">(點擊卡片翻面，自動朗讀發音；已鎖定兩欄佈局)</span>
     </div>
-    <div class="absolute bottom-10 right-10 animate-pulse">
-        <i data-lucide="sparkles" class="w-16 h-16 text-black"></i>
-    </div>
-    <div class="absolute top-20 right-20 rotate-12 hidden md:block">
-        <div class="bg-white border-4 border-black p-4 brutalist-shadow-sm">
-            <i data-lucide="smile" class="w-8 h-8 text-black"></i>
-        </div>
-    </div>
+  </header>
 
-    <!-- 主要內容容器 -->
-    <main class="relative z-10 max-w-3xl w-full">
+  <main class="cards-container" id="cardsGrid"></main>
+
+  <footer class="footer-note">
+    高中英文 B5L4 核心單字記憶系統 • 採用 406% 溢位裁切安全區消除黑線
+  </footer>
+
+  <script>
+    const vocabData = [
+    {
+        "en": "ambitious",
+        "ph": "æmˈbɪʃəs",
+        "pos": "adj.",
+        "cn": "有野心的",
+        "strategy": "諧音 (俺必勝)",
+        "mnemonic": "熱血少年綁上布條大喊「俺必勝」(ambitious)，立志問鼎天下第一，充滿極大【野心】！",
+        "ex": "The ambitious businesswoman is planning to buy another company to make her business bigger.",
+        "grid": 1,
+        "pos_idx": 0,
+        "prompt_desc": "At sunrise atop a mountain peak, a black-haired young swordsman with a golden headband marked 'VICTORY' points his sword toward a grand imperial city, his eyes blazing with ambitious determination and heroic fire."
+    },
+    {
+        "en": "accomplish",
+        "ph": "əˈkɑmplɪʃ",
+        "pos": "vt.",
+        "cn": "完成",
+        "strategy": "諧音 (阿公立石)",
+        "mnemonic": "老工匠阿公擦乾熱汗，在塔尖合力【阿公立起巨石】(accomplish)，終於【完成】了神殿的封頂工程！",
+        "ex": "The young kids accomplished the task of building a rainbow-colored bridge with their LEGO bricks.",
+        "grid": 1,
+        "pos_idx": 1,
+        "prompt_desc": "On high scaffolding atop a grand temple at sunset, a muscular white-haired veteran craftsman and his young apprentice set the final glowing sculpted capstone into place, cheering as the great architectural construction is completed."
+    },
+    {
+        "en": "mission",
+        "ph": "ˈmɪʃən",
+        "pos": "n. [C]",
+        "cn": "任務",
+        "strategy": "諧音 (密信)",
+        "mnemonic": "雪白信鴿送來皇家封蠟【密信】(mission)，裡面交付了討伐巨龍的最高機密【任務】！",
+        "ex": "The detection dog is on a mission to find illegal things at the airport.",
+        "grid": 1,
+        "pos_idx": 2,
+        "prompt_desc": "On a moonlit castle balcony, a silver-haired female knight gently opens a royal wax-sealed secret mission letter brought by a white pigeon, the parchment glowing with a secret dragon hunting quest map."
+    },
+    {
+        "en": "guarantee",
+        "ph": "ˌɡærənˈti",
+        "pos": "vt.",
+        "cn": "保證，擔保",
+        "strategy": "諧音 (蓋印章)",
+        "mnemonic": "鍛造大師在神兵上烙下「蓋認證金印」(guarantee)，向勇者百分之百【保證】絕不折斷！",
+        "ex": "This shopping website guarantees that its products have the lowest prices.",
+        "grid": 1,
+        "pos_idx": 3,
+        "prompt_desc": "In a glowing forge, a dwarven blacksmith master stamps a glowing red-hot gold seal onto a newly forged holy blade, sparks flying as he guarantees the unbreakable legendary quality."
+    },
+    {
+        "en": "ranking",
+        "ph": "ˈræŋkɪŋ",
+        "pos": "n. [C]",
+        "cn": "排名",
+        "strategy": "諧音 (讓 King)",
+        "mnemonic": "天梯榜首易主，全服頂尖高手紛紛甘拜下風，全體「讓位給新王」【讓 King】(ranking)，恭賀他登上世界【排名】第一！",
+        "ex": "Blake is a gaming expert. He is now fourth in the esports world rankings.",
+        "grid": 1,
+        "pos_idx": 4,
+        "prompt_desc": "On a giant holographic esports ranking ladder screen, top champion avatars bow down and yield the center golden throne and crown to the new king, celebrating the protagonist at number one in world rankings."
+    },
+    {
+        "en": "register",
+        "ph": "ˈrɛdʒɪstɚ",
+        "pos": "vi.; vt.",
+        "cn": "註冊，登記",
+        "strategy": "諧音 (雷擊石刻)",
+        "mnemonic": "學徒召喚金色雷光轟向石碑，進行【雷擊石刻】(register) 烙下真名，正式完成大魔法師的資格【註冊與登記】！",
+        "ex": "To register for this ticket selling app, you will need to provide your name and date of birth.",
+        "grid": 1,
+        "pos_idx": 5,
+        "prompt_desc": "In a grand trial chamber, a young mage strikes a massive stone registry with golden lightning from his wand, deeply inscribing his glowing magic crest to officially register as a licensed adventurer."
+    },
+    {
+        "en": "description",
+        "ph": "dɪˈskrɪpʃən",
+        "pos": "n. [C][U]",
+        "cn": "描述",
+        "strategy": "字根拆解 (script 劇本手稿)",
+        "mnemonic": "動畫導演手拿厚厚的【劇本 (script)】，指著分鏡圖逐一向作畫師詳細【描述 (description)】主角黑化時的神情！",
+        "ex": "Lauren and Max are putting up posters with a description of their missing dog.",
+        "grid": 1,
+        "pos_idx": 6,
+        "prompt_desc": "In an animation studio meeting, a talented director holding a thick anime script gives an animated, detailed visual description pointing to close-up character expression storyboards on the wall."
+    },
+    {
+        "en": "release",
+        "ph": "rɪˈlis",
+        "pos": "vt.",
+        "cn": "發布，釋出",
+        "strategy": "諧音 (熱力四射)",
+        "mnemonic": "演唱會舞台煙火【熱力四射】(release)，偶像天團正式向全球歌迷【發布釋出】最新主打新曲！",
+        "ex": "The organization released more information about the global disease in order to make people understand the serious situation.",
+        "grid": 1,
+        "pos_idx": 7,
+        "prompt_desc": "On a massive arena concert stage blazing with fireworks and vibrant laser lighting, a cute anime idol holds a microphone as the giant overhead screen announces the official global release of her new album."
+    },
+    {
+        "en": "dominate",
+        "ph": "ˈdɑməˌnet",
+        "pos": "vt.; vi.",
+        "cn": "主宰，控制",
+        "strategy": "經典神器聯想 (多米諾骨牌 Domino)",
+        "mnemonic": "棋聖輕推第一顆【多米諾】(dominate) 骨牌引發連鎖崩塌，整場棋局完全被他一人【主宰與控制】！",
+        "ex": "Taiwan dominated the baseball game against South Korea and won 7-0.",
+        "grid": 1,
+        "pos_idx": 8,
+        "prompt_desc": "Over a dark tactical chessboard, a white-haired anime grandmaster tips a glowing gold domino piece triggering a cascading wave that sweeps away all enemy black pieces, completely dominating the match."
+    },
+    {
+        "en": "overall",
+        "ph": "ˌoʊvɚˈɔl",
+        "pos": "adj.",
+        "cn": "整體的",
+        "strategy": "拆字 (over 超越 + all 全部)",
+        "mnemonic": "少年戰力【over (超越)】了【all (全體)】選手，榮獲全賽區【整體的】總冠軍！",
+        "ex": "The overall winner of this competition will receive a huge amount of money.",
+        "grid": 1,
+        "pos_idx": 9,
+        "prompt_desc": "On a golden tournament podium, a triumphant anime champion lifts a giant trophy into the air as the digital scoreboard shows all his battle stats maxed out, crowning him the overall victor."
+    },
+    {
+        "en": "reservation",
+        "ph": "ˌrɛzɚˈveʃən",
+        "pos": "n. [C]",
+        "cn": "預訂",
+        "strategy": "概念直觀 (尊榮席位)",
+        "mnemonic": "壽星提早致電景觀餐廳訂位，侍者在窗邊桌擺上立牌，成功完成生日大餐的【預訂】！",
+        "ex": "I made a reservation for my birthday dinner because the restaurant is always busy.",
+        "grid": 1,
+        "pos_idx": 10,
+        "prompt_desc": "In an elegant romantic glasshouse restaurant overlooking a city skyline at dusk, a tuxedo waiter politely places a polished golden 'RESERVED' sign on the finest private window table."
+    },
+    {
+        "en": "rate",
+        "ph": "ret",
+        "pos": "vt.",
+        "cn": "評價",
+        "strategy": "概念直觀 (星級評分)",
+        "mnemonic": "挑剔的美食評審亮出特五星評分板 (rate)，給予這道極品拉麵至高無上的頂級【評價】！",
+        "ex": "This hotel provides all kinds of services. No wonder it is rated the top hotel in this city.",
+        "grid": 1,
+        "pos_idx": 11,
+        "prompt_desc": "In a gourmet culinary showdown, a stern food critic with glasses tastes a glowing bowl of ramen and weeps with joy, enthusiastically holding up a '99 PTS - TOP RATED' scoreboard."
+    },
+    {
+        "en": "envy",
+        "ph": "ˈɛnvi",
+        "pos": "vt.",
+        "cn": "羨慕，忌妒",
+        "strategy": "生活熟詞諧音 (MV 影片)",
+        "mnemonic": "少年自製的動漫【MV】(envy) 在網路上爆紅突破千萬點閱，引來無數同儕極度的【羨慕與忌妒】！",
+        "ex": "Cory won two free plane tickets to Tokyo. His friends all envied his good luck.",
+        "grid": 1,
+        "pos_idx": 12,
+        "prompt_desc": "In a school computer lab, high schoolers crowd around a monitor watching the protagonist self-made anime music MV hit 10 million views, peers clutching their collars in intense jealousy and envy."
+    },
+    {
+        "en": "admit",
+        "ph": "ədˈmɪt",
+        "pos": "vt.; vi.",
+        "cn": "承認",
+        "strategy": "情境動態諧音 (額頭冒汗)",
+        "mnemonic": "面對偵探鐵證如山的指紋，犯人緊張到【額頭冒汗】(admit) 心理防線瓦解，終於低頭【承認】罪行！",
+        "ex": "When asked about the rumor, the director admitted that she planned to retire next year.",
+        "grid": 1,
+        "pos_idx": 13,
+        "prompt_desc": "Under the spotlight in a police interrogation room, a clever detective slams down a pocketwatch with fingerprint evidence as the suspect sweats profusely and clutches his head, breaking down to admit his crime."
+    },
+    {
+        "en": "organic",
+        "ph": "ɔrˈɡænɪk",
+        "pos": "adj.",
+        "cn": "有機的",
+        "strategy": "概念直觀 (天然有機)",
+        "mnemonic": "農夫堅持純天然無農藥，在晨光與露水培育下，採收翠綠飽滿的【有機】蔬菜！",
+        "ex": "The store owner is a supporter of natural farming, so she only sells organic vegetables.",
+        "grid": 1,
+        "pos_idx": 14,
+        "prompt_desc": "In a lush morning farm bathed in golden dawn, a friendly grandfather and anime granddaughter proudly hold up a basket of crisp, dew-kissed organic tomatoes and leafy greens, butterflies fluttering around."
+    },
+    {
+        "en": "rotten",
+        "ph": "ˈrɑtṇ",
+        "pos": "adj.",
+        "cn": "腐爛的",
+        "strategy": "諧音 (肉疼爛掉)",
+        "mnemonic": "寶箱裡忘記冷藏的魔物大塊肉「肉疼爛掉」(rotten)，直冒綠煙、徹底【腐爛】！",
+        "ex": "The vegetables were rotten, so the kitchen was full of an unpleasant smell.",
+        "grid": 2,
+        "pos_idx": 0,
+        "prompt_desc": "Inside a dark dungeon, an opened chest reveals old meat turned sickly green, emitting swirls of foul green smoke and skull fumes, as a rogue pinches his nose and steps back in disgust."
+    },
+    {
+        "en": "mislead",
+        "ph": "mɪsˈlid",
+        "pos": "vt.",
+        "cn": "誤導",
+        "strategy": "拆字 (mis 錯誤 + lead 引導)",
+        "mnemonic": "小丑路牌惡意【mis (錯誤)】地【lead (指路)】，將冒險者徹底【誤導】走進危險沼澤！",
+        "ex": "The article misled people over the social issue because most of what it mentioned was not true.",
+        "grid": 2,
+        "pos_idx": 1,
+        "prompt_desc": "At a foggy forest crossroad, a mischievous wooden jester sign points deceptively toward a bubbling toxic swamp, misleading the young adventuring party down the wrong dangerous path."
+    },
+    {
+        "en": "intention",
+        "ph": "ɪnˈtɛnʃən",
+        "pos": "n. [C][U]",
+        "cn": "目的",
+        "strategy": "諧音 (硬挺神)",
+        "mnemonic": "武術少年在瀑布下刻苦鍛鍊「硬挺神」(intention)，真正的【目的】是為了守護家園！",
+        "ex": "Fiona spent the whole afternoon in the library with the intention of collecting as much information as possible for her report.",
+        "grid": 2,
+        "pos_idx": 2,
+        "prompt_desc": "Beneath a roaring mountain waterfall, a determined shirtless martial artist sits in focused meditation enduring the heavy torrent, his resolute gaze showing his unwavering intention to protect his village."
+    },
+    {
+        "en": "remind",
+        "ph": "rɪˈmaɪnd",
+        "pos": "vt.",
+        "cn": "提醒，使想起",
+        "strategy": "拆字 (re 再次 + mind 大腦)",
+        "mnemonic": "機械寵物狗頭頂鬧鐘響起，再次在腦海【re-mind】響起，及時【提醒】少年帶准考證！",
+        "ex": "The pictures I found in my drawer reminded me of my happy childhood.",
+        "grid": 2,
+        "pos_idx": 3,
+        "prompt_desc": "At an apartment entryway, a robotic pet dog rings its glowing antenna bell, carrying an exam ticket in its mouth to remind the hurried student on his way out."
+    },
+    {
+        "en": "exaggerated",
+        "ph": "ɪɡˈzædʒəˌretɪd",
+        "pos": "adj.",
+        "cn": "誇大的",
+        "strategy": "料理漫諧音 (一個炸雞雷)",
+        "mnemonic": "廚師明明只炸了一塊小雞塊，卻吹噓是「毀滅宇宙的【一個大炸雞雷】(exaggerated)」，宣傳手法極其【誇大不實】！",
+        "ex": "Vanessa's reaction was too exaggerated. She was actually not that surprised.",
+        "grid": 2,
+        "pos_idx": 4,
+        "prompt_desc": "In an exaggerated culinary comedy manga scene, a chef holds a tiny bite-sized fried chicken nugget while an absurdly giant supernova galaxy explosion visual effect erupts behind him."
+    },
+    {
+        "en": "expose",
+        "ph": "ɪkˈspoz",
+        "pos": "vt.",
+        "cn": "使接觸到，使暴露於",
+        "strategy": "概念直觀 (強光暴曬)",
+        "mnemonic": "天空破曉射下一道金色天光，將潛伏的吸血鬼瞬間【暴露於】(expose) 熾熱的烈日之下！",
+        "ex": "The child was exposed to different cultures because she often traveled to different countries with her parents.",
+        "grid": 2,
+        "pos_idx": 5,
+        "prompt_desc": "A holy ray of dawn sunlight pierces dark clouds, catching a cloaked vampire who shrieks and shields his face, smoke rising as he is suddenly exposed to brilliant daylight."
+    },
+    {
+        "en": "excessive",
+        "ph": "ɪkˈsɛsɪv",
+        "pos": "adj.",
+        "cn": "過多的",
+        "strategy": "萌系諧音 (一顆塞死)",
+        "mnemonic": "小倉鼠貪吃把向日葵種子【一顆塞死】(excessive) 狂吞，兩腮鼓得比皮球還大，堅果數量實在【過多過量】了！",
+        "ex": "Sandy added an excessive amount of sugar to the tea, so it tasted extremely sweet.",
+        "grid": 2,
+        "pos_idx": 6,
+        "prompt_desc": "A cute chubby golden hamster has both cheeks stuffed comically full of sunflower seeds and tries to cram in one more giant chestnut, an excessive mountain of food with an 'OVERLOAD' sign above."
+    },
+    {
+        "en": "trap",
+        "ph": "træp",
+        "pos": "vt. / n.",
+        "cn": "使中計；陷阱",
+        "strategy": "概念直觀 (機關陷阱)",
+        "mnemonic": "盜賊踩中地磚機關瞬間裂開，上方落下金色能量巨網，讓他中計困於【陷阱】(trap) 之中！",
+        "ex": "The contract trapped me into extra costs because the key rule was hidden in the fine print.",
+        "grid": 2,
+        "pos_idx": 7,
+        "prompt_desc": "In ancient ruins, a cocky enemy scout steps onto a pressure floor plate that opens into a pit while an enchanted golden energy net drops from above, trapping him securely."
+    },
+    {
+        "en": "little by little",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "漸漸地",
+        "strategy": "概念直觀 (點滴成長)",
+        "mnemonic": "少女每天細心澆灌盆栽幼苗，隨時間推進，幼苗【漸漸地】(little by little) 茁壯成大樹！",
+        "ex": "Andre practices dancing every day, and his skill becomes better little by little.",
+        "grid": 2,
+        "pos_idx": 8,
+        "prompt_desc": "A heartwarming multi-stage time-lapse of a young girl watering a tiny seedling on her windowsill, watching it sprout green leaves little by little into a lush flowering plant."
+    },
+    {
+        "en": "play a trick on",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "捉弄，戲弄",
+        "strategy": "概念直觀 (惡作劇)",
+        "mnemonic": "淘氣的小貓精靈躡手躡腳，在班長背後偷偷貼上搞笑烏龜貼紙，故意【捉弄】好朋友！",
+        "ex": "On April Fools' Day, Tom's friends played a trick on him by putting a note on his back.",
+        "grid": 2,
+        "pos_idx": 9,
+        "prompt_desc": "In an anime high school hallway, a winged prankster girl giggles quietly as she sneaks up behind a stern class president to stick a funny cartoon turtle note onto his blazer."
+    },
+    {
+        "en": "make sure",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "確保，務必",
+        "strategy": "概念直觀 (儀表確認)",
+        "mnemonic": "飛行員起飛前對照清單逐項打勾，【確保、務必】(make sure) 每個儀表指針都精準無誤！",
+        "ex": "Make sure that you can get up on time tomorrow, or you will miss the bus.",
+        "grid": 2,
+        "pos_idx": 10,
+        "prompt_desc": "Inside an airship cockpit, a focused teen aviator wearing brass goggles inspects glowing dials on a brass clipboard, pointing to verify all pressure gauges are in the green safe zone to make sure all systems are ready."
+    }
+];
+
+    const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    let gridImages = {
+      1: isLocal ? "B5L4G1.jpg" : "https://raw.githubusercontent.com/terenceylhc/vocB5/main/B5L4G1.jpg",
+      2: isLocal ? "B5L4G2.jpg" : "https://raw.githubusercontent.com/terenceylhc/vocB5/main/B5L4G2.jpg"
+    };
+
+    // 計算 4x4 精靈圖的背景百分比位置
+    function calculateSpritePosition(posIdx) {
+      const col = posIdx % 4;
+      const row = Math.floor(posIdx / 4);
+      const posX = (col * (100 / 3)).toFixed(4);
+      const posY = (row * (100 / 3)).toFixed(4);
+      return `${posX}% ${posY}%`;
+    }
+
+    // Web Speech API 語音朗讀
+    function speakWord(word) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function renderCards() {
+      const container = document.getElementById('cardsGrid');
+      container.innerHTML = '';
+
+      vocabData.forEach((item, index) => {
+        const bgPos = calculateSpritePosition(item.pos_idx);
+        const imgSrc = gridImages[item.grid] || `B5L4G${item.grid}.jpg`;
+
+        const scene = document.createElement('div');
+        scene.className = 'card-scene';
+
+        scene.innerHTML = `
+          <div class="card" id="card-${index}">
+            <!-- 【正面呈現 (Visual Cue Panel)】 -->
+            <div class="card-face card-front">
+              <div class="image-wrapper">
+                <div class="sprite-img" id="sprite-${index}" 
+                     style="background-image: url('${imgSrc}'), url('B5L4G${item.grid}.jpg'); background-position: ${bgPos};">
+                </div>
+              </div>
+              <div class="front-text-area">
+                <div class="front-word">${item.en}</div>
+                <div class="front-meta">
+                  <span>${item.ph ? `[${item.ph}]` : ''}</span>
+                  <button type="button" class="audio-btn" title="朗讀發音" onclick="event.stopPropagation(); speakWord('${item.en.replace(/'/g, "\'")}')">🔊</button>
+                </div>
+                <div class="flip-hint">👆 點擊卡片查看記憶口訣</div>
+              </div>
+            </div>
+
+            <!-- 【反面呈現 (Textual Content Panel)】 -->
+            <div class="card-face card-back">
+              <div class="back-word">${item.en}</div>
+              <div class="pos-and-meaning">
+                <span class="pos-tag">${item.pos}</span>
+                <span class="meaning-text">${item.cn}</span>
+              </div>
+              <div class="strategy-hint">💡 策略：${item.strategy}</div>
+              <div class="mnemonic-box">${item.mnemonic}</div>
+              <div class="example-area">"${item.ex}"</div>
+            </div>
+          </div>
+        `;
+
+        const card = scene.querySelector('.card');
         
-        <!-- 頂部標籤 -->
-        <div class="inline-block bg-[#00FF41] border-4 border-black px-6 py-2 mb-8 -rotate-2 brutalist-shadow-sm">
-            <span class="text-xl font-black text-black tracking-tighter uppercase">
-                Work in Progress
-            </span>
-        </div>
+        // 點擊卡片翻面並自動朗讀一次單字
+        scene.addEventListener('click', () => {
+          card.classList.toggle('is-flipped');
+          speakWord(item.en);
+        });
 
-        <!-- 標題區塊 -->
-        <div class="brutalist-card p-8 sm:p-12 mb-12">
-            <h1 class="text-6xl sm:text-8xl font-black text-black leading-none mb-6 italic uppercase">
-                COMING <br> SOON <span class="not-italic text-[#FF60F0]">!</span>
-            </h1>
-            <div class="h-2 w-full bg-black mb-6"></div>
-            <p class="text-2xl sm:text-3xl font-bold text-black leading-tight">
-                我們正在打造一些 <br>
-                <span class="bg-[#FF60F0] px-2 text-white">超酷的東西</span>。
-            </p>
-        </div>
+        container.appendChild(scene);
+      });
+    }
 
-        <!-- 內容特點格點 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-            <div class="bg-[#ADFF00] border-4 border-black p-6 brutalist-shadow-md hover-lift transition-all cursor-default">
-                <i data-lucide="zap" class="w-10 h-10 mb-4 fill-white text-black"></i>
-                <h3 class="text-xl font-black mb-2">極速體驗</h3>
-                <p class="font-bold">比你想像的還要快。</p>
-            </div>
-            <div class="bg-white border-4 border-black p-6 brutalist-shadow-md hover-lift transition-all cursor-default">
-                <i data-lucide="heart" class="w-10 h-10 mb-4 fill-[#FF60F0] text-[#FF60F0]"></i>
-                <h3 class="text-xl font-black mb-2">精心設計</h3>
-                <p class="font-bold">每一像素都充滿靈魂。</p>
-            </div>
-        </div>
+    document.getElementById('imageUploader').addEventListener('change', function(e) {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        const objectUrl = URL.createObjectURL(file);
+        const nameUpper = file.name.toUpperCase();
+        if (nameUpper.includes('G1') || nameUpper.includes('L4G1') || nameUpper.includes('1')) {
+          gridImages[1] = objectUrl;
+        }
+        if (nameUpper.includes('G2') || nameUpper.includes('L4G2') || nameUpper.includes('2')) {
+          gridImages[2] = objectUrl;
+        }
+      });
+      renderCards();
+    });
 
-        <!-- 底部按鈕與連結 -->
-        <div class="flex flex-col sm:flex-row items-center gap-8">
-            <button class="w-full sm:w-auto bg-black text-white text-xl font-black px-10 py-5 border-4 border-black brutalist-button-shadow transition-all flex items-center justify-center gap-4">
-                了解更多 <i data-lucide="arrow-right" class="w-6 h-6"></i>
-            </button>
-            
-            <div class="flex gap-4">
-                <a href="#" class="w-14 h-14 bg-[#FF60F0] border-4 border-black flex items-center justify-center text-xl font-black brutalist-shadow-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">IG</a>
-                <a href="#" class="w-14 h-14 bg-[#3B82F6] border-4 border-black flex items-center justify-center text-xl font-black brutalist-shadow-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-white">FB</a>
-                <a href="#" class="w-14 h-14 bg-white border-4 border-black flex items-center justify-center text-xl font-black brutalist-shadow-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">X</a>
-            </div>
-        </div>
-    </main>
-
-    <!-- 頁尾 -->
-    <footer class="mt-20">
-        <p class="text-xl font-black text-black bg-white border-2 border-black px-4 py-1 brutalist-shadow-sm">
-            EST. 2026 / BRAND STUDIO
-        </p>
-    </footer>
-
-    <script>
-        // 初始化 Lucide 圖示
-        lucide.createIcons();
-    </script>
+    // 初始化網頁渲染
+    renderCards();
+  </script>
 </body>
 </html>
