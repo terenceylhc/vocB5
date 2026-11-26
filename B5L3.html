@@ -1,133 +1,793 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COMING SOON | 新野獸派風格</title>
-    <!-- 引入 Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Lucide 圖示 -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@400;900&display=swap');
-        
-        body {
-            font-family: 'Lexend Mega', 'Courier New', monospace;
-            background-color: #FFD100;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧠 互動單字記憶卡 - B5L3: A Stolen Identity</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --tag-bg: #e2e8f0;
+      --tag-text: #334155;
+      --orange-accent: #ff9800;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 20px 38px rgba(0, 0, 0, 0.12);
+      --radius: 28px;
+    }
 
-        .brutalist-card {
-            background-color: white;
-            border: 6px solid black;
-            box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        .brutalist-shadow-sm {
-            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
-        }
+    body {
+      font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 32px 20px 80px;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
 
-        .brutalist-shadow-md {
-            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
-        }
+    header {
+      max-width: 1240px;
+      margin: 0 auto 36px;
+      text-align: center;
+    }
 
-        .brutalist-button-shadow {
-            box-shadow: 8px 8px 0px 0px rgba(255, 255, 255, 1);
-        }
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
 
-        .brutalist-button-shadow:hover {
-            box-shadow: none;
-            transform: translate(4px, 4px);
-        }
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      font-weight: 500;
+    }
 
-        .hover-lift:hover {
-            transform: translate(-4px, -4px);
-            box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
-        }
+    .toolbar {
+      background: #ffffff;
+      padding: 14px 24px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-size: 0.95rem;
+      color: #334155;
+      border: 1px solid #edf2f7;
+    }
 
-        @keyframes bounce-custom {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(10deg); }
-        }
-        .animate-bounce-custom {
-            animation: bounce-custom 3s infinite ease-in-out;
-        }
-    </style>
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: #0284c7;
+      background: #e0f2fe;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.88rem;
+    }
+
+    .file-input-label {
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 8px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid #bfdbfe;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-input-label:hover {
+      background: #dbeafe;
+      transform: translateY(-1px);
+    }
+
+    .cards-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    @media (min-width: 768px) {
+      .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .card-scene {
+      perspective: 1400px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .card {
+      width: 100%;
+      position: relative;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      background-color: var(--card-bg);
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+      transform-style: preserve-3d;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      grid-area: 1 / 1 / 2 / 2;
+      width: 100%;
+      border-radius: var(--radius);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      background: var(--card-bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-front {
+      z-index: 2;
+      transform: rotateY(0deg);
+    }
+
+    .image-wrapper {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+      background-color: #f1f5f9;
+    }
+
+    .sprite-img {
+      width: 100%;
+      height: 100%;
+      background-size: 406% 406%;
+      background-repeat: no-repeat;
+      background-color: #f8fafc;
+      transform-origin: center center;
+      transition: transform 0.4s ease;
+      image-rendering: smooth;
+      transform: translateZ(0);
+    }
+
+    .card:hover .sprite-img {
+      transform: scale(1.03) translateZ(0);
+    }
+
+    .front-text-area {
+      padding: 28px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .front-word {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.15;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .front-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .audio-btn {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      outline: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      color: #1e293b;
+    }
+
+    .audio-btn:hover {
+      background: #e2e8f0;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .flip-hint {
+      margin-top: 18px;
+      font-size: 0.88rem;
+      color: #94a3b8;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      align-items: center;
+      justify-content: center;
+      padding: 38px 28px;
+      text-align: center;
+      min-height: 100%;
+    }
+
+    .back-word {
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.1;
+      margin-bottom: 14px;
+      letter-spacing: -0.02em;
+    }
+
+    .pos-and-meaning {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .pos-tag {
+      font-size: 1.1rem;
+      font-weight: bold;
+      font-style: italic;
+      background-color: var(--tag-bg);
+      color: var(--tag-text);
+      padding: 4px 14px;
+      border-radius: 10px;
+    }
+
+    .meaning-text {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #1e293b;
+    }
+
+    .strategy-hint {
+      font-size: 1.05rem;
+      color: #475569;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .mnemonic-box {
+      background-color: var(--orange-accent);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.3rem;
+      padding: 16px 24px;
+      border-radius: 20px;
+      line-height: 1.55;
+      margin-bottom: 20px;
+      width: 92%;
+      max-width: 500px;
+      box-shadow: 0 6px 18px rgba(255, 152, 0, 0.28);
+    }
+
+    .example-area {
+      width: 92%;
+      max-width: 500px;
+      border-top: 1.5px dashed #cbd5e1;
+      padding-top: 18px;
+      font-size: 1.25rem;
+      font-style: italic;
+      color: #475569;
+      line-height: 1.48;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+  </style>
 </head>
-<body class="min-h-screen w-full flex flex-col items-center justify-center p-6 overflow-x-hidden">
+<body>
 
-    <!-- 裝飾性背景元素 -->
-    <div class="absolute top-10 left-10 animate-bounce-custom">
-        <i data-lucide="star" class="w-12 h-12 text-black fill-black"></i>
+  <header>
+    <h1>🧠 互動單字記憶卡</h1>
+    <div class="subtitle">三民普通型高級中學 英文第五冊 U3: A Stolen Identity (共 28 個單字與片語)</div>
+    <div class="toolbar">
+      <span class="badge-status">⚡ 雲端圖源自動連線 (4x4 無框裁切)</span>
+      <label class="file-input-label" title="選取 B5L3G1.jpg 與 B5L3G2.jpg">
+        📂 手動選取本機圖片替換
+        <input type="file" id="imageUploader" multiple accept="image/*" style="display: none;">
+      </label>
+      <span style="font-size: 0.88rem; color: #64748b;">(點擊卡片翻面，自動朗讀發音；已鎖定兩欄佈局)</span>
     </div>
-    <div class="absolute bottom-10 right-10 animate-pulse">
-        <i data-lucide="sparkles" class="w-16 h-16 text-black"></i>
-    </div>
-    <div class="absolute top-20 right-20 rotate-12 hidden md:block">
-        <div class="bg-white border-4 border-black p-4 brutalist-shadow-sm">
-            <i data-lucide="smile" class="w-8 h-8 text-black"></i>
-        </div>
-    </div>
+  </header>
 
-    <!-- 主要內容容器 -->
-    <main class="relative z-10 max-w-3xl w-full">
+  <main class="cards-container" id="cardsGrid"></main>
+
+  <footer class="footer-note">
+    高中英文 B5L3 核心單字記憶系統 • 採用 406% 溢位裁切安全區消除黑線
+  </footer>
+
+  <script>
+    const vocabData = [
+    {
+        "en": "tribe",
+        "ph": "traɪb",
+        "pos": "n. [C]",
+        "cn": "部落",
+        "strategy": "諧音 (踹步)",
+        "mnemonic": "原住民【部落】的勇士圍著營火跳戰舞，齊聲大喝奮力【踹步】(tribe) 震撼大地！",
+        "ex": "Some South America tribes in rural areas do not have any interaction with the rest of the world.",
+        "grid": 1,
+        "pos_idx": 0,
+        "prompt_desc": "In a lush forest clearing illuminated by a blazing campfire, indigenous warriors with feather headdresses and tribal marks stomp heavily in a war dance, kicking up sparks and dirt."
+    },
+    {
+        "en": "complete",
+        "ph": "kəmˈplit",
+        "pos": "adj. / vt.",
+        "cn": "完全的；完成",
+        "strategy": "諧音 (肯陪你)",
+        "mnemonic": "隊友拍胸脯說「我【肯陪你】(complete) 到底」，我們攜手【完成】任務獲得【完全的】勝利！",
+        "ex": "Talking with Nick was a complete waste of time because he did not pay attention to what I said.",
+        "grid": 1,
+        "pos_idx": 1,
+        "prompt_desc": "Two teen adventurers stand on a high-tech tower at sunset; boy gives a thumbs-up saying I will accompany you, as behind them a glowing reactor finishes charging to complete the task."
+    },
+    {
+        "en": "harmony",
+        "ph": "ˈhɑrmənɪ",
+        "pos": "n. [U]",
+        "cn": "和諧，和睦",
+        "strategy": "諧音 (好夢妮)",
+        "mnemonic": "精靈少女「好夢妮」(harmony) 在綠意森林中輕撫豎琴，鳥獸圍繞安睡，呈現最完美的【和諧】！",
+        "ex": "All the team members worked in harmony and finished the project without any problems.",
+        "grid": 1,
+        "pos_idx": 2,
+        "prompt_desc": "An ethereal elf maiden sitting under a massive sacred tree playing a glowing golden harp, surrounded by peacefully sleeping deer, songbirds, and foxes in pure harmony."
+    },
+    {
+        "en": "legend",
+        "ph": "ˈlɛdʒənd",
+        "pos": "n. [C][U]",
+        "cn": "傳說",
+        "strategy": "諧音 (雷陣)",
+        "mnemonic": "在狂暴的【雷陣】(legend) 雨中，拔出石中聖劍的勇者成為永恆的史詩【傳說】！",
+        "ex": "The legend of King Arthur has been made into many books, movies, and TV shows.",
+        "grid": 1,
+        "pos_idx": 3,
+        "prompt_desc": "On a jagged mountain cliff in a purple thunder and lightning storm, a heroic anime warrior lifts a glowing holy sword pulled from stone, immortal legend aura."
+    },
+    {
+        "en": "violent",
+        "ph": "ˈvaɪələnt",
+        "pos": "adj.",
+        "cn": "暴力的",
+        "strategy": "諧音 (外耳冷)",
+        "mnemonic": "狂風暴雪猛烈來襲，【暴力的】(violent) 極寒狂風把少年的【外耳刮得冰冷】刺痛！",
+        "ex": "The police arrested the man who attacked people with a stick in a violent way.",
+        "grid": 1,
+        "pos_idx": 4,
+        "prompt_desc": "A brave young traveler hiking through a violent mountain blizzard, covering his cold freezing ears with gloves against punishing swirls of snow and frost."
+    },
+    {
+        "en": "weep",
+        "ph": "wip",
+        "pos": "vi.; vt.",
+        "cn": "哭泣",
+        "strategy": "諧音 (威迫)",
+        "mnemonic": "反派大將軍冷酷【威迫】(weep)，無助的少女抱著玩偶傷心【哭泣】、淚如雨下！",
+        "ex": "Sara wept as her boyfriend was about to take a flight. They would not see each other again until next year.",
+        "grid": 1,
+        "pos_idx": 5,
+        "prompt_desc": "Close-up of a sorrowful anime girl hugging a stuffed bear, big sparkling tears weeping down her blushing cheeks before the menacing shadow of an intimidating general."
+    },
+    {
+        "en": "yell",
+        "ph": "jɛl",
+        "pos": "vi.; vt.",
+        "cn": "大吼，喊叫",
+        "strategy": "諧音 (夜樓)",
+        "mnemonic": "少年在深夜的鐘【夜樓】(yell) 頂端，雙手攏在嘴邊朝著星空放聲【大吼/喊叫】釋放壓力！",
+        "ex": "Julian yelled at his neighbor to stop playing the drums at midnight.",
+        "grid": 1,
+        "pos_idx": 6,
+        "prompt_desc": "A schoolboy standing on the roof of a high night clocktower beneath starry night, cupping hands around mouth shouting and yelling loud into the sky with visible shockwave ripples."
+    },
+    {
+        "en": "constant",
+        "ph": "ˈkɑnstənt",
+        "pos": "adj.",
+        "cn": "持續的，不斷的",
+        "strategy": "諧音 (扛石頭)",
+        "mnemonic": "少年前往神殿修行，日以繼夜【扛石頭】(constant) 爬山，接受【持續不斷的】意志力考驗！",
+        "ex": "The school building is under construction, so the students hear the constant noise in class.",
+        "grid": 1,
+        "pos_idx": 7,
+        "prompt_desc": "A resolute anime martial artist carrying a giant training boulder on his shoulders, ascending steep stone stairs at sunset with constant unwavering footsteps."
+    },
+    {
+        "en": "miserable",
+        "ph": "ˈmɪzərəbḷ",
+        "pos": "adj.",
+        "cn": "不幸的，悲慘的",
+        "strategy": "日漫情境諧音 (米澤落榜)",
+        "mnemonic": "高考生米澤看榜單發現自己【米澤落榜】(miserable)，在傾盆大雨中跪地痛哭，處境無比【悲慘不幸】！",
+        "ex": "The war in Syria has made millions of people's lives miserable.",
+        "grid": 1,
+        "pos_idx": 8,
+        "prompt_desc": "In pouring torrential rain outside a school gate, a despairing student drops to his knees before an exam bulletin board, clutching his head crying in miserable misfortune."
+    },
+    {
+        "en": "native",
+        "ph": "ˈnetɪv",
+        "pos": "adj.",
+        "cn": "出生地的，本土的",
+        "strategy": "諧音 (泥土)",
+        "mnemonic": "雙腳赤足踏在故鄉芬芳的【泥土】(native) 上，這就是我【出生地的】土地與家鄉！",
+        "ex": "Claire was born and raised in France, so French is her native language.",
+        "grid": 1,
+        "pos_idx": 9,
+        "prompt_desc": "A joyful anime boy with straw hat standing barefoot on fertile dark native soil in waving golden rice fields, overlooking his sunny beloved countryside hometown."
+    },
+    {
+        "en": "religion",
+        "ph": "rɪˈlɪdʒən",
+        "pos": "n. [C][U]",
+        "cn": "宗教",
+        "strategy": "諧音 (熱烈敬)",
+        "mnemonic": "在神聖的大殿中，成千上萬的信徒手捧燭光【熱烈敬】(religion) 拜神像，展現對【宗教】的極致虔誠！",
+        "ex": "Freedom of religion allows people to believe in different gods.",
+        "grid": 1,
+        "pos_idx": 10,
+        "prompt_desc": "Inside a magnificent sunlit cathedral, white-robed worshipers holding warm flickering candles warmly and reverently bow before a radiant golden angel idol representing holy religion."
+    },
+    {
+        "en": "violate",
+        "ph": "ˈvaɪəˌlet",
+        "pos": "vt.",
+        "cn": "違反，違背",
+        "strategy": "諧音 (外流淚)",
+        "mnemonic": "選手違規偷用道具【違反】(violate) 了競賽規定被判失格，只能靠在選手室【外流淚】懊悔不已！",
+        "ex": "The chemical factory was heavily fined because it had violated several environmental laws.",
+        "grid": 1,
+        "pos_idx": 11,
+        "prompt_desc": "In an arena hallway outside the locker room, a disqualified athlete marked with a red rule violation stamp leans against a cold wall weeping with tears flowing down in regret."
+    },
+    {
+        "en": "scold",
+        "ph": "skold",
+        "pos": "vt.",
+        "cn": "責罵，責備",
+        "strategy": "構詞聯想 (S + cold 冰冷眼神)",
+        "mnemonic": "冷酷的女將軍眼神比極地冰雪還要冷 (s-cold)，對犯錯的副官施以毫無溫度的嚴厲【責罵】！",
+        "ex": "The parents scolded their daughter for stealing her classmate's money.",
+        "grid": 1,
+        "pos_idx": 12,
+        "prompt_desc": "A stern military female commander with ice-cold glare and frost aura fiercely scolding and reprimanding a trembling subordinate officer with her tactical pointer."
+    },
+    {
+        "en": "severely",
+        "ph": "səˈvɪrlɪ",
+        "pos": "adv.",
+        "cn": "嚴厲地，嚴重地",
+        "strategy": "諧音 (撕破衣)",
+        "mnemonic": "劍客在決鬥中被魔獸利爪【撕破衣】(severely) 服，胸口【嚴重地】受傷！",
+        "ex": "Brent was severely injured during baseball practice. It might take him a full year to recover.",
+        "grid": 1,
+        "pos_idx": 13,
+        "prompt_desc": "An anime swordsman kneeling in battlefield rubble, uniform severely ripped and torn across the chest by beast claws, severely injured yet eyes blazing with unbroken resolve."
+    },
+    {
+        "en": "promptly",
+        "ph": "ˈprɑmptlɪ",
+        "pos": "adv.",
+        "cn": "立即地，迅速地",
+        "strategy": "諧音 (跑來踢)",
+        "mnemonic": "隊長一聲令下，前鋒立刻【跑來踢】(promptly) 球破門，反應極其【迅速與立即】！",
+        "ex": "The government acted promptly after the earthquake to provide victims with medical assistance.",
+        "grid": 1,
+        "pos_idx": 14,
+        "prompt_desc": "An anime soccer striker dashing in with lightning-blue speed trails, promptly kicking the ball with tremendous force into the goal net with instant rapid reflexes."
+    },
+    {
+        "en": "moreover",
+        "ph": "morˈoʊvɚ",
+        "pos": "adv.",
+        "cn": "此外，而且",
+        "strategy": "拆字法 (more 更多 + over 超越)",
+        "mnemonic": "學霸分數拿得比別人【more (更多)】，甚至【over (超越)】滿分破表，【此外，而且 (moreover)】還打破校史紀錄！",
+        "ex": "The food in the restaurant is delicious. Moreover, the prices are quite reasonable.",
+        "grid": 2,
+        "pos_idx": 0,
+        "prompt_desc": "An excited anime student proudly displaying a test paper with a sparkling golden score exceeding 100 with bonus points, more and over surpassing all records, confetti flying."
+    },
+    {
+        "en": "adequate",
+        "ph": "ˈædəkwɪt",
+        "pos": "adj.",
+        "cn": "足夠的",
+        "strategy": "諧音 (愛大塊)",
+        "mnemonic": "大胃王最【愛大塊】(adequate) 牛排，盤子堆滿大肉塊，份量絕對【足夠】！",
+        "ex": "Caroline made sure that she prepared adequate food for the camping trip, since she won't be able to buy any in the mountains.",
+        "grid": 2,
+        "pos_idx": 1,
+        "prompt_desc": "A hungry anime teen with glittering eyes and utensils ready before an abundant banquet platter piled high with giant sizzling thick beef steaks, an adequate generous feast."
+    },
+    {
+        "en": "barely",
+        "ph": "ˈbɛrlɪ",
+        "pos": "adv.",
+        "cn": "勉強，幾乎沒有",
+        "strategy": "詞根聯想 (bare 赤裸/空蕩蕩 + ly)",
+        "mnemonic": "月底錢包空蕩蕩見底赤裸裸 (bare-ly)，全身搜遍【勉強】找到一塊錢，【幾乎沒有】剩餘的錢買泡麵了！",
+        "ex": "It seems strange that Linda invited me to her birthday party. I barely know her.",
+        "grid": 2,
+        "pos_idx": 2,
+        "prompt_desc": "A broke student holding an inverted empty bare leather wallet with just a single small coin falling out, nervous sweat drop, barely having enough money for dinner."
+    },
+    {
+        "en": "alcohol",
+        "ph": "ˈælkəˌhɔl",
+        "pos": "n. [U]",
+        "cn": "酒",
+        "strategy": "諧音 (鴨渴喝)",
+        "mnemonic": "醉漢把【酒】(alcohol) 桶打破，引來一隻【鴨渴喝】地狂飲裡面的美酒！",
+        "ex": "Do not drive after you drink alcohol because it is very dangerous.",
+        "grid": 2,
+        "pos_idx": 3,
+        "prompt_desc": "In a rustic tavern yard, a cracked barrel spills glowing red wine, as a cute yellow duck eagerly drinks the alcohol, wobbling with comical rosy drunk cheeks."
+    },
+    {
+        "en": "escape",
+        "ph": "əˈskep",
+        "pos": "vi.; vt.",
+        "cn": "逃跑，逃避",
+        "strategy": "生活神器聯想 (鍵盤上的 Esc 鍵)",
+        "mnemonic": "遭遇駭客程式病毒追殺，特工在危急關頭猛砸左上角的【Esc 鍵】(escape)，成功緊急【逃跑/脫離】！",
+        "ex": "A tiger escaped from its cage, so the zoo was closed for the safety of the public.",
+        "grid": 2,
+        "pos_idx": 4,
+        "prompt_desc": "A cyber anime hero running from a giant red virus monster, punching a huge glowing holographic ESC key in mid-air to open a bright portal and escape."
+    },
+    {
+        "en": "nightmare",
+        "ph": "ˈnaɪtˌmɛr",
+        "pos": "n. [C]",
+        "cn": "極不愉快的事；噩夢",
+        "strategy": "傳說構詞拆解 (night 黑夜 + mare 夢魘魔馬)",
+        "mnemonic": "在漆黑的【黑夜 (night)】中，踏著幽藍烈火的【夢魘魔馬 (mare)】破霧而來，簡直是最可怕的【噩夢】(nightmare)！",
+        "ex": "Last week was a nightmare for Doris. She did poorly in all three interviews and lost the job opportunities.",
+        "grid": 2,
+        "pos_idx": 5,
+        "prompt_desc": "A gigantic menacing Nightmare demon steed with blue fire hooves and shadowy armor charging through dark night mist toward an awestruck anime protagonist, terrifying nightmare visual."
+    },
+    {
+        "en": "erase",
+        "ph": "ɪˈres",
+        "pos": "vt.; vi.",
+        "cn": "清除，抹去",
+        "strategy": "熟詞去尾法 (eraser 橡皮擦去 er)",
+        "mnemonic": "魔法學院學霸揮舞特製的彩虹橡皮擦 (eraser)，一道神光瞬間把黑板上的黑魔法禁咒全部【erase 清除抹去】！",
+        "ex": "John erased all of the information on his social media account so that no one could see his posts from the past.",
+        "grid": 2,
+        "pos_idx": 6,
+        "prompt_desc": "A magic academy girl waving a sparkling rainbow eraser wand across a stone blackboard, completely erasing dark curse runes into shimmering disappearing dust."
+    },
+    {
+        "en": "acknowledge",
+        "ph": "əkˈnɑlɪdʒ",
+        "pos": "vt.",
+        "cn": "承認",
+        "strategy": "詞根拆解 (ac 朝向 + knowledge 認知/真功夫)",
+        "mnemonic": "劍道宗師收刀入鞘深鞠一躬，坦然【承認】(acknowledge) 眼前少年的劍術真功夫 (knowledge) 確實超越了自己！",
+        "ex": "After the players acknowledged that they had cheated in the game, lots of people criticized them on the Internet.",
+        "grid": 2,
+        "pos_idx": 7,
+        "prompt_desc": "A veteran samurai master bowing deeply in respect to a panting young anime apprentice in a cherry blossom dojo, formally acknowledging the youth superior martial skill."
+    },
+    {
+        "en": "survivor",
+        "ph": "sɚˈvaɪvɚ",
+        "pos": "n. [C]",
+        "cn": "倖存者，生還者",
+        "strategy": "諧音 (蛇外婆)",
+        "mnemonic": "森林大火後，慈祥的【蛇外婆】(survivor) 護送小動物走出灰燼，成為偉大的【倖存者】！",
+        "ex": "The survivors of the concentration camps bravely shared their stories with the world after they were set free.",
+        "grid": 2,
+        "pos_idx": 8,
+        "prompt_desc": "In a scorched forest emerging into golden morning light, a kind giant green serpent wearing glasses shelters baby bunnies and squirrels, standing together as brave survivors."
+    },
+    {
+        "en": "turn...upside down",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "把……弄得混亂",
+        "strategy": "圖像法 (天地顛倒)",
+        "mnemonic": "頑皮的重力小精靈發動魔法，把整個客廳上下顛倒、【弄得一團混亂】(turn upside down)！",
+        "ex": "The typhoon turned our event upside down. We had to rearrange almost every part of it.",
+        "grid": 2,
+        "pos_idx": 9,
+        "prompt_desc": "A mischievous gravity sprite waves her wand causing furniture, tables, cups, and books to invert and stick to the ceiling in upside-down chaotic fun."
+    },
+    {
+        "en": "look down on",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "輕視",
+        "strategy": "圖像法 (居高臨下冷笑)",
+        "mnemonic": "傲慢的貴族少爺站在二樓旋轉梯上，微瞇雙眼自上而下冷笑著【輕視】(look down on) 眾人！",
+        "ex": "Patrick looks down on all of his teammates because he believes that he is the best player on the team.",
+        "grid": 2,
+        "pos_idx": 10,
+        "prompt_desc": "An arrogant blonde noble youth standing at the top of a grand marble staircase, hiding a sneer with a golden fan, looking down with cold disdain at people below."
+    },
+    {
+        "en": "come to one's aid",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "幫助某人",
+        "strategy": "圖像法 (神兵天降)",
+        "mnemonic": "主角即將遇險時，同伴手持發光大盾破空而降，及時【前來援助幫助】(come to one's aid)！",
+        "ex": "Many countries came to Japan's aid after the 2011 Tohoku earthquake and tsunami.",
+        "grid": 2,
+        "pos_idx": 11,
+        "prompt_desc": "A heroic armored knight dropping from the sky with a shining golden tower shield to block monster attacks, coming to the aid of a cornered ally in battle."
+    },
+    {
+        "en": "quite a few",
+        "ph": "",
+        "pos": "phr.",
+        "cn": "許多",
+        "strategy": "諧音 (快多付)",
+        "mnemonic": "機台噴出超多娃娃，店員喊「快多付」代幣，兩人抱著【許多】(quite a few) 玩偶笑開懷！",
+        "ex": "Quite a few stores were closed because the number of tourists decreased during the global disease.",
+        "grid": 2,
+        "pos_idx": 12,
+        "prompt_desc": "Two thrilled anime schoolgirls at an arcade claw machine overflowing with a giant mountain of cute cat plushies, hugging quite a few plush toys in joy."
+    }
+];
+
+    const isLocal = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    let gridImages = {
+      1: isLocal ? "B5L3G1.jpg" : "https://raw.githubusercontent.com/terenceylhc/vocB5/main/B5L3G1.jpg",
+      2: isLocal ? "B5L3G2.jpg" : "https://raw.githubusercontent.com/terenceylhc/vocB5/main/B5L3G2.jpg"
+    };
+
+    // 計算 4x4 精靈圖的背景百分比位置
+    function calculateSpritePosition(posIdx) {
+      const col = posIdx % 4;
+      const row = Math.floor(posIdx / 4);
+      const posX = (col * (100 / 3)).toFixed(4);
+      const posY = (row * (100 / 3)).toFixed(4);
+      return `${posX}% ${posY}%`;
+    }
+
+    // Web Speech API 語音朗讀
+    function speakWord(word) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function renderCards() {
+      const container = document.getElementById('cardsGrid');
+      container.innerHTML = '';
+
+      vocabData.forEach((item, index) => {
+        const bgPos = calculateSpritePosition(item.pos_idx);
+        const imgSrc = gridImages[item.grid] || `B5L3G${item.grid}.jpg`;
+
+        const scene = document.createElement('div');
+        scene.className = 'card-scene';
+
+        scene.innerHTML = `
+          <div class="card" id="card-${index}">
+            <!-- 【正面呈現 (Visual Cue Panel)】 -->
+            <div class="card-face card-front">
+              <div class="image-wrapper">
+                <div class="sprite-img" id="sprite-${index}" 
+                     style="background-image: url('${imgSrc}'), url('B5L3G${item.grid}.jpg'); background-position: ${bgPos};">
+                </div>
+              </div>
+              <div class="front-text-area">
+                <div class="front-word">${item.en}</div>
+                <div class="front-meta">
+                  <span>${item.ph ? `[${item.ph}]` : ''}</span>
+                  <button type="button" class="audio-btn" title="朗讀發音" onclick="event.stopPropagation(); speakWord('${item.en.replace(/'/g, "\'")}')">🔊</button>
+                </div>
+                <div class="flip-hint">👆 點擊卡片查看記憶口訣</div>
+              </div>
+            </div>
+
+            <!-- 【反面呈現 (Textual Content Panel)】 -->
+            <div class="card-face card-back">
+              <div class="back-word">${item.en}</div>
+              <div class="pos-and-meaning">
+                <span class="pos-tag">${item.pos}</span>
+                <span class="meaning-text">${item.cn}</span>
+              </div>
+              <div class="strategy-hint">💡 策略：${item.strategy}</div>
+              <div class="mnemonic-box">${item.mnemonic}</div>
+              <div class="example-area">"${item.ex}"</div>
+            </div>
+          </div>
+        `;
+
+        const card = scene.querySelector('.card');
         
-        <!-- 頂部標籤 -->
-        <div class="inline-block bg-[#00FF41] border-4 border-black px-6 py-2 mb-8 -rotate-2 brutalist-shadow-sm">
-            <span class="text-xl font-black text-black tracking-tighter uppercase">
-                Work in Progress
-            </span>
-        </div>
+        // 點擊卡片翻面並自動朗讀一次單字
+        scene.addEventListener('click', () => {
+          card.classList.toggle('is-flipped');
+          speakWord(item.en);
+        });
 
-        <!-- 標題區塊 -->
-        <div class="brutalist-card p-8 sm:p-12 mb-12">
-            <h1 class="text-6xl sm:text-8xl font-black text-black leading-none mb-6 italic uppercase">
-                COMING <br> SOON <span class="not-italic text-[#FF60F0]">!</span>
-            </h1>
-            <div class="h-2 w-full bg-black mb-6"></div>
-            <p class="text-2xl sm:text-3xl font-bold text-black leading-tight">
-                我們正在打造一些 <br>
-                <span class="bg-[#FF60F0] px-2 text-white">超酷的東西</span>。
-            </p>
-        </div>
+        container.appendChild(scene);
+      });
+    }
 
-        <!-- 內容特點格點 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-            <div class="bg-[#ADFF00] border-4 border-black p-6 brutalist-shadow-md hover-lift transition-all cursor-default">
-                <i data-lucide="zap" class="w-10 h-10 mb-4 fill-white text-black"></i>
-                <h3 class="text-xl font-black mb-2">極速體驗</h3>
-                <p class="font-bold">比你想像的還要快。</p>
-            </div>
-            <div class="bg-white border-4 border-black p-6 brutalist-shadow-md hover-lift transition-all cursor-default">
-                <i data-lucide="heart" class="w-10 h-10 mb-4 fill-[#FF60F0] text-[#FF60F0]"></i>
-                <h3 class="text-xl font-black mb-2">精心設計</h3>
-                <p class="font-bold">每一像素都充滿靈魂。</p>
-            </div>
-        </div>
+    document.getElementById('imageUploader').addEventListener('change', function(e) {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        const objectUrl = URL.createObjectURL(file);
+        const nameUpper = file.name.toUpperCase();
+        if (nameUpper.includes('G1') || nameUpper.includes('L3G1') || nameUpper.includes('1')) {
+          gridImages[1] = objectUrl;
+        }
+        if (nameUpper.includes('G2') || nameUpper.includes('L3G2') || nameUpper.includes('2')) {
+          gridImages[2] = objectUrl;
+        }
+      });
+      renderCards();
+    });
 
-        <!-- 底部按鈕與連結 -->
-        <div class="flex flex-col sm:flex-row items-center gap-8">
-            <button class="w-full sm:w-auto bg-black text-white text-xl font-black px-10 py-5 border-4 border-black brutalist-button-shadow transition-all flex items-center justify-center gap-4">
-                了解更多 <i data-lucide="arrow-right" class="w-6 h-6"></i>
-            </button>
-            
-            <div class="flex gap-4">
-                <a href="#" class="w-14 h-14 bg-[#FF60F0] border-4 border-black flex items-center justify-center text-xl font-black brutalist-shadow-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">IG</a>
-                <a href="#" class="w-14 h-14 bg-[#3B82F6] border-4 border-black flex items-center justify-center text-xl font-black brutalist-shadow-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all text-white">FB</a>
-                <a href="#" class="w-14 h-14 bg-white border-4 border-black flex items-center justify-center text-xl font-black brutalist-shadow-sm hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">X</a>
-            </div>
-        </div>
-    </main>
-
-    <!-- 頁尾 -->
-    <footer class="mt-20">
-        <p class="text-xl font-black text-black bg-white border-2 border-black px-4 py-1 brutalist-shadow-sm">
-            EST. 2026 / BRAND STUDIO
-        </p>
-    </footer>
-
-    <script>
-        // 初始化 Lucide 圖示
-        lucide.createIcons();
-    </script>
+    // 初始化網頁渲染
+    renderCards();
+  </script>
 </body>
 </html>
